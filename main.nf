@@ -33,15 +33,23 @@ workflow NFCORE_NIDAVELLIR {
     samplesheet // channel: samplesheet read in from --input
 
     main:
+    ch_multiqc_report = Channel.empty()
 
-    //
-    // WORKFLOW: Run pipeline
-    //
-    NIDAVELLIR (
-        samplesheet
-    )
+    if (params.pipeline_track == 'data_storage') {
+        NIDAVELLIR (
+            samplesheet
+        )
+        ch_multiqc_report = NIDAVELLIR.out.multiqc_report
+    } else if (params.pipeline_track == 'training') {
+        error "Pipeline track 'training' is planned but not yet implemented in this release. Use --pipeline_track data_storage."
+    } else if (params.pipeline_track == 'inference') {
+        error "Pipeline track 'inference' is planned but not yet implemented in this release. Use --pipeline_track data_storage."
+    } else {
+        error "Unsupported --pipeline_track '${params.pipeline_track}'. Choose one of: training, inference, data_storage"
+    }
+
     emit:
-    multiqc_report = NIDAVELLIR.out.multiqc_report // channel: /path/to/multiqc_report.html
+    multiqc_report = ch_multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

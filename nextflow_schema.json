@@ -231,6 +231,27 @@
                     "default": true,
                     "description": "Generate upload manifests without performing OMERO import when true.",
                     "fa_icon": "fas fa-vial"
+                },
+                "pipeline_track": {
+                    "type": "string",
+                    "default": "data_storage",
+                    "description": "Select which high-level workflow track to run.",
+                    "enum": [
+                        "training",
+                        "inference",
+                        "data_storage"
+                    ],
+                    "fa_icon": "fas fa-route"
+                },
+                "data_storage_mode": {
+                    "type": "string",
+                    "default": "full",
+                    "description": "Choose the data storage subworkflow mode: conversion only or full OMERO upload pipeline.",
+                    "enum": [
+                        "generate_ometiff",
+                        "full"
+                    ],
+                    "fa_icon": "fas fa-diagram-project"
                 }
             }
         }

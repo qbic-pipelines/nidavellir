@@ -59,6 +59,31 @@ By default, uploads run in dry-run mode and only emit JSON manifests. To perform
 
 Optional: `--omero_project`, `--omero_dataset`, `--omero_metadata_ns`.
 
+
+### Selecting pipeline track and data storage mode
+
+Use `--pipeline_track` to select the long-term workflow family:
+
+- `data_storage` (implemented)
+- `training` (planned; not yet implemented)
+- `inference` (planned; not yet implemented)
+
+Within the implemented `data_storage` track, use `--data_storage_mode` to choose:
+
+- `full`: `generate_ometiff` + OMERO upload scaffold
+- `generate_ometiff`: conversion-only path (`bioformats2raw -> raw2ometiff`)
+
+Example (conversion only):
+
+```bash
+nextflow run nf-core/nidavellir \
+  --input ./samplesheet.csv \
+  --outdir ./results \
+  --pipeline_track data_storage \
+  --data_storage_mode generate_ometiff \
+  -profile docker
+```
+
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
