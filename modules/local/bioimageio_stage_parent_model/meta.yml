@@ -1,0 +1,29 @@
+name: "bioimageio_stage_parent_model"
+description: Resolve and stage a parent BioImage.io model from ID, DOI, or URI and emit a machine-readable descriptor.
+keywords:
+  - bioimageio
+  - model-zoo
+  - metadata
+tools:
+  - "bioimageio-spec":
+      description: "BioImage.io Python tooling used to resolve model resources."
+      homepage: "https://github.com/bioimage-io/spec-bioimage-io"
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map
+    - parent_ref:
+        type: string
+        description: Parent model reference (model ID, DOI, or URI)
+output:
+  - parent_model:
+    - meta:
+        type: map
+        description: Sample metadata map
+    - "*_bioimageio_parent_model.json":
+        type: file
+        description: Deterministic JSON descriptor for the staged parent model
+  - versions:
+    - "versions.yml":
+        type: file
+        description: Software versions file
