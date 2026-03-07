@@ -22,6 +22,8 @@
 
 **nf-core/nidavellir** is a Nextflow / nf-core workflow system for FAIR and reproducible bioimage machine learning pipelines.
 
+Beyond a single training or inference run, the project goal is to implement the **full human-in-the-loop (HITL) cycle**: dataset staging, model training, inference, expert correction/curation, and reintegration of corrected labels into the next training round. This lifecycle emphasis is conceptually aligned with practical interactive-segmentation workflows such as [Mesmer](https://www.nature.com/articles/s41587-021-01094-0) and [Cellpose](https://www.nature.com/articles/s41592-022-01663-4), while being delivered as a modular, reproducible nf-core workflow architecture.
+
 ### Current implemented capabilities (MVP)
 
 This repository currently provides concrete data-staging/storage and inference scaffolds, plus a structured training-track stage graph with deterministic scaffold outputs for downstream integration.
@@ -54,7 +56,7 @@ Nidavellir is being developed as a modular system that covers the full ML lifecy
   - Store images and labels in OMERO
   - Annotate datasets with metadata
 
-The architecture supports human-in-the-loop learning workflows where corrected predictions are persisted as new training data.
+The architecture is explicitly designed for end-to-end human-in-the-loop learning, where model predictions are reviewed and corrected by experts, persisted as curated labels, and cycled back into subsequent retraining iterations.
 
 > [!NOTE]
 > Some lifecycle components described above are planned and may not yet be implemented in the current release.
