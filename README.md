@@ -70,6 +70,13 @@ The architecture is explicitly designed for end-to-end human-in-the-loop learnin
 
 ### Workflow diagram (current tracks and target HITL loop)
 
+[Download the vector graphic (SVG)](docs/images/nf-core-nidavellir_contained-workflows.svg)
+
+![nf-core/nidavellir contained workflow tracks](docs/images/nf-core-nidavellir_contained-workflows.svg)
+
+<details>
+<summary>Mermaid source (editable)</summary>
+
 ```mermaid
 flowchart TD
     A[Input samplesheet and optional OMERO references] --> B{workflow_track selector}
@@ -120,6 +127,8 @@ flowchart TD
     E6 --> I[Versioned model and provenance artifact for redeployment]
     I --> F2
 ```
+
+</details>
 
 > [!NOTE]
 > Some lifecycle components described above are planned and may not yet be implemented in the current release.
