@@ -1,0 +1,30 @@
+name: "raw2ometiff"
+description: Convert OME-Zarr image stores into OME-TIFF files for downstream interoperability.
+keywords:
+  - omezarr
+  - ometiff
+  - imaging
+tools:
+  - "raw2ometiff":
+      description: "Converts OME-Zarr into OME-TIFF."
+      homepage: "https://github.com/glencoesoftware/raw2ometiff"
+      documentation: "https://github.com/glencoesoftware/raw2ometiff"
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map
+    - omezarr:
+        type: directory
+        description: Input OME-Zarr directory
+output:
+  - ometiff:
+    - meta:
+        type: map
+        description: Sample metadata map
+    - "*.ome.tif":
+        type: file
+        description: Converted OME-TIFF image
+  - versions:
+    - "versions.yml":
+        type: file
+        description: Software versions file

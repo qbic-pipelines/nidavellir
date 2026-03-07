@@ -16,7 +16,7 @@ Nidavellir is developed as a multi-stage bioimage ML workflow system with three 
 | -------------- | ----- | ------------------------- |
 | Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Partially implemented** (currently staging + FAIR metadata export). |
 | Inference | Convert images, run model inference, export masks/labelled outputs. | **Planned**. |
-| Data storage | Persist images/labels and metadata in OMERO. | **Planned**. |
+| Data storage | Persist images/labels and metadata in OMERO. | **Scaffolded** (OME-Zarr -> OME-TIFF -> OMERO upload manifest; optional live upload). |
 
 Current command-line execution in this repository runs the implemented MVP staging flow. Future releases will expose additional lifecycle components as dedicated modules/subworkflows while preserving FAIR provenance outputs.
 
@@ -45,6 +45,19 @@ cell_002,/data/images/cell_002.czi,
 ```
 
 An [example samplesheet](../assets/samplesheet.csv) is included in this repository.
+
+
+### OMERO data storage scaffold
+
+The data storage pipeline now runs as reusable subworkflows: `generate_ometiff` (which chains `bioformats2raw -> raw2ometiff`) followed by `omero_upload_ometiff`.
+
+By default, uploads run in dry-run mode and only emit JSON manifests. To perform a live upload, set:
+
+```bash
+--omero_dry_run false --omero_host <host> --omero_user <user> --omero_password <password>
+```
+
+Optional: `--omero_project`, `--omero_dataset`, `--omero_metadata_ns`.
 
 ## Running the pipeline
 
