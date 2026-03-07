@@ -195,6 +195,63 @@
                     "fa_icon": "far calendar",
                     "description": "Suffix to add to the trace report filename. Default is the date and time in the format yyyy-MM-dd_HH-mm-ss.",
                     "hidden": true
+                },
+                "omero_host": {
+                    "type": "string",
+                    "description": "OMERO server host or connection URI used for data upload.",
+                    "fa_icon": "fas fa-server"
+                },
+                "omero_user": {
+                    "type": "string",
+                    "description": "Username for OMERO authentication.",
+                    "fa_icon": "fas fa-user"
+                },
+                "omero_password": {
+                    "type": "string",
+                    "description": "Password for OMERO authentication.",
+                    "fa_icon": "fas fa-key"
+                },
+                "omero_project": {
+                    "type": "string",
+                    "description": "OMERO project identifier/name receiving imported images.",
+                    "fa_icon": "fas fa-folder-tree"
+                },
+                "omero_dataset": {
+                    "type": "string",
+                    "description": "OMERO dataset identifier/name receiving imported images.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "omero_metadata_ns": {
+                    "type": "string",
+                    "description": "OMERO metadata namespace used when annotating imported datasets.",
+                    "fa_icon": "fas fa-tags"
+                },
+                "omero_dry_run": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Generate upload manifests without performing OMERO import when true.",
+                    "fa_icon": "fas fa-vial"
+                },
+                "pipeline_track": {
+                    "type": "string",
+                    "default": "data_storage",
+                    "description": "Select which high-level workflow track to run.",
+                    "enum": [
+                        "training",
+                        "inference",
+                        "data_storage"
+                    ],
+                    "fa_icon": "fas fa-route"
+                },
+                "data_storage_mode": {
+                    "type": "string",
+                    "default": "full",
+                    "description": "Choose the data storage subworkflow mode: conversion only or full OMERO upload pipeline.",
+                    "enum": [
+                        "generate_ometiff",
+                        "full"
+                    ],
+                    "fa_icon": "fas fa-diagram-project"
                 }
             }
         }

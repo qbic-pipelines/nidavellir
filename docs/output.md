@@ -20,6 +20,8 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and currently p
 | ----------------------- | ------------ | --------------------------------- |
 | `<sample>.ome.zarr/` | Yes | Standardised, analysis-ready image representation for model development and future inference tasks. |
 | `metadata/fair_training_inputs.ndjson` | Yes | Machine-readable provenance records linking sample IDs, optional OMERO IDs, staged paths, and data formats. |
+| `ometiff/` | Conditional | Converted OME-TIFF files created by `raw2ometiff`. |
+| `omero/` | Conditional | JSON upload manifests (or live upload traces) for OMERO synchronisation and metadata annotation. |
 | `pipeline_info/` reports + `params.json` | Yes | Reproducibility and execution provenance (run parameters, software/report traceability). |
 | `ro-crate-metadata.json` (repository root template) | Template present | Anchor metadata for future RO-Crate packaging of workflow artifacts. |
 
