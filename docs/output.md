@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document describes the outputs currently produced by the implemented data storage/conversion path and associated FAIR metadata summary.
+This document describes outputs currently produced by implemented data storage/conversion paths, inference exports, and scaffolded training-track contracts.
 
 The directories listed below are created in the results directory after pipeline completion. All paths are relative to the top-level results directory.
 
@@ -15,6 +15,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and currently p
 - [Inference export scaffold](#inference-export-scaffold) - Produce mask and labelled-image OME-TIFF exports with a placeholder inference step
 - [OMERO upload scaffold](#omero-upload-scaffold) - Emit OMERO upload manifests (or optionally perform upload)
 - [FAIR metadata summary](#fair-metadata-summary) - Emit line-delimited JSON records for staged training inputs
+- [Training scaffold outputs](#training-scaffold-outputs) - Structured stage contracts and reusable module artifacts for stages 1-6
 - [Pipeline information](#pipeline-information) - Nextflow reports and collated software versions
 
 ## FAIR lifecycle mapping
@@ -96,6 +97,23 @@ OMERO manifest outputs are produced in `--data_storage_mode full`. Live upload b
 
 This metadata summary is intended as machine-readable input for downstream RO-Crate and provenance packaging steps.
 
+
+### Training scaffold outputs
+
+The `--workflow_track training` path is now structurally wired as a six-stage DAG with deterministic contracts between stages:
+
+1. Stage dataset from OMERO (placeholder descriptor).
+2. Stage parent model from BioImage Model Zoo (structured artifact descriptor).
+3. Cross-validation training scaffold (trained-model placeholder artifact contract).
+4. Evaluation scaffold (metrics summary contract).
+5. Publication scaffold (BioImage.io publication-record contract).
+6. RO-Crate packaging scaffold (RO-Crate artifact path contract).
+
+In this repository revision, these outputs are primarily scaffold metadata contracts. Reusable local modules also exist for:
+
+- BioImage.io parent-model staging and publication-record generation.
+- RO-Crate artifact construction with OMERO dataset/tag/server references, parent-model linkage, training hyperparameters, and publication identifiers.
+
 ### Pipeline information
 
 <details markdown="1">
@@ -114,7 +132,7 @@ This metadata summary is intended as machine-readable input for downstream RO-Cr
 
 The following artifact groups are expected as lifecycle components are added:
 
-- **Training outputs (planned)**: trained model packages, cross-validation metrics, evaluation summaries, and model publication metadata.
+- **Training outputs (planned hardening)**: replace placeholder contracts with production training artifacts, fold metrics, and publication transactions.
 - **Inference outputs (planned additions)**: production model predictions, confidence/uncertainty maps, and inference run manifests.
 - **Data storage outputs (planned)**: OMERO synchronisation logs, object identifiers, and dataset-level annotation metadata.
-- **RO-Crate packaging (planned)**: release-ready RO-Crate bundles that capture data/model/provenance relationships across training and inference runs.
+- **RO-Crate packaging (partially implemented)**: local packaging module generates training RO-Crate artifacts; full end-to-end workflow wiring and release automation remain to be completed.

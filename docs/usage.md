@@ -14,7 +14,7 @@ Nidavellir is developed as a multi-stage bioimage ML workflow system with three 
 
 | Workflow track | Scope | Status in this repository |
 | -------------- | ----- | ------------------------- |
-| Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Scaffolded** (track selectable; stage plan logged; implementation pending). |
+| Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Scaffolded + structurally wired** (explicit six-stage DAG with stable output contracts and placeholder stage internals). |
 | Inference | Convert images, run model inference, export masks/labelled outputs. | **Partially implemented** (conversion + exports implemented; model inference step is a placeholder scaffold). |
 | Data storage | Persist images/labels and metadata in OMERO. | **Partially implemented** (`generate_ometiff` conversion path + OMERO upload manifest scaffold; optional live upload). |
 
@@ -66,7 +66,7 @@ Use `--workflow_track` to select which workflow scaffold to run:
 
 - `data_storage` (implemented)
 - `generate_ometiff` (implemented conversion-only shortcut)
-- `training` (scaffolded: logs stage plan, implementation pending)
+- `training` (scaffold DAG implemented: explicit stages 1-6, stable contracts, placeholder internals for execution logic)
 - `inference` (partially implemented: OME-Zarr staging + mask/labelled OME-TIFF export, with placeholder model step)
 
 `--pipeline_track` is retained as a backward-compatible alias. If both are set, `--workflow_track` takes precedence.
@@ -88,7 +88,7 @@ nextflow run nf-core/nidavellir \
 
 ### Training scaffold parameters (stages 1-6)
 
-The training track is currently scaffold-only: selecting `--workflow_track training` logs the stage plan, but does **not** yet execute dataset queries, model retrieval, training, evaluation, publication API calls, or RO-Crate packaging. The parameter groups below are available now to capture planning/provenance metadata and to keep future runs reproducible when implementation lands.
+The training track now executes an explicit six-stage scaffold DAG and emits stable stage contracts. Current logic is still placeholder-oriented for OMERO querying, model training, evaluation, and live publication calls, but stage boundaries and output schemas are in place for incremental hardening. The parameter groups below capture planning/provenance metadata and support reproducible future runs as modules are fully wired.
 
 1. **Stage (1) OMERO query scaffold inputs**
    - `--training_stage1_omero_tags`

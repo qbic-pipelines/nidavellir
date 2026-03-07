@@ -24,7 +24,7 @@
 
 ### Current implemented capabilities (MVP)
 
-This repository currently provides an initial staging workflow that standardises microscopy image inputs into **OME-Zarr** and writes structured metadata for downstream provenance and RO-Crate packaging.
+This repository currently provides concrete data-staging/storage and inference scaffolds, plus a structured training-track stage graph with deterministic scaffold outputs for downstream integration.
 
 Default implemented steps include:
 
@@ -32,6 +32,8 @@ Default implemented steps include:
 2. Convert source images to **OME-Zarr** using `bioformats2raw`.
 3. Write machine-readable training-input metadata (`fair_training_inputs.ndjson`).
 4. Track software versions for reproducibility.
+
+In addition, the `training` track now executes a six-stage scaffold DAG (dataset staging, parent-model staging, training, evaluation, publication, RO-Crate packaging) that emits stable channel contracts. Local modules for BioImage.io model handling and training RO-Crate generation are included as reusable building blocks for follow-up wiring.
 
 ### Target full lifecycle architecture
 
@@ -99,7 +101,7 @@ Use `--workflow_track` to select the high-level flow:
 
 - `data_storage`: data storage flow (supports `--data_storage_mode full|generate_ometiff`)
 - `generate_ometiff`: conversion-only shortcut (`bioformats2raw -> raw2ometiff`)
-- `training`: scaffold track (stage plan logged; implementation pending)
+- `training`: scaffold DAG track (explicit stages 1-6 with stable output contracts; placeholder logic for training/eval internals)
 - `inference`: implemented conversion/export scaffold (`bioformats2raw -> [placeholder inference] -> raw2ometiff` for mask + labelled outputs)
 
 `--pipeline_track` is retained as a backward-compatible alias. If both are set, `--workflow_track` takes precedence.

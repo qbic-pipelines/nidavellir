@@ -8,7 +8,7 @@ Nidavellir is a Nextflow / nf-core based workflow system for FAIR and reproducib
 2. **Inference pipeline**
 3. **Data storage pipeline**
 
-Each track is designed to exchange machine-readable outputs (for example OME-Zarr data and metadata records) to support provenance tracking and iterative model improvement.
+Each track is designed to exchange machine-readable outputs (for example OME-Zarr data, model/publication descriptors, and RO-Crate metadata) to support provenance tracking and iterative model improvement.
 
 ## Technology stack
 
@@ -62,6 +62,6 @@ Nidavellir is designed to support human-in-the-loop workflows: corrected predict
 ## Implementation status
 
 - **Implemented / partially implemented**: Data storage track with conversion (`bioformats2raw -> raw2ometiff`), FAIR training-input metadata export, and OMERO upload scaffold (manifest-first; optional live upload).
-- **Scaffolded**: `training` track is selectable and currently emits stage-plan logs only.
+- **Scaffolded / structurally wired**: `training` track now runs an explicit six-stage DAG with stable inter-stage contracts and placeholder internals for model execution logic.
 - **Partially implemented**: `inference` track with OME-Zarr conversion and OME-TIFF export plus model-step placeholder scaffold.
-- **Planned**: Full lifecycle components for training/evaluation/publication, production inference engines/manifests, and richer OMERO write-back workflows.
+- **Planned**: Full production training/evaluation execution, live model publication integration, end-to-end module wiring for all training artifacts, production inference engines/manifests, and richer OMERO write-back workflows.
