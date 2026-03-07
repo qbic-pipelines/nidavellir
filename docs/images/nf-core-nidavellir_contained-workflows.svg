@@ -16,7 +16,7 @@
 
   <rect x="0" y="0" width="1800" height="1320" fill="#f3f4f6"/>
   <text x="80" y="72" class="title">nf-core/nidavellir • workflow map (derived from README + Nextflow code)</text>
-  <text x="80" y="102" class="subtitle">White circles = modules/processes • Gray circles = scaffold stages • Gray blocks = workflows/subworkflows • File icons = outputs • external nodes = OMERO/BioImage Zoo</text>
+  <text x="80" y="102" class="subtitle">White circles = modules/processes • Gray circles = scaffold stages • Gray blocks = workflows/subworkflows • File icons = outputs • external nodes = OMERO / BioImage Zoo / Human reviewer</text>
 
   <!-- top-level utility workflow -->
   <rect x="70" y="130" width="1660" height="120" rx="20" fill="#d1d5db" opacity="0.55"/>
@@ -119,32 +119,45 @@
   <text x="1005" y="1002" class="tiny">Current training workflow emits deterministic placeholder records while preserving stage schemas.</text>
 
 
-  <!-- External platform nodes -->
-  <rect x="120" y="960" width="300" height="170" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-  <text x="270" y="992" text-anchor="middle" class="workflow" style="font-size:16px;">OMERO server</text>
+  <!-- External platform nodes (center hub) -->
+  <rect x="620" y="520" width="260" height="145" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="750" y="550" text-anchor="middle" class="workflow" style="font-size:16px;">OMERO server</text>
   <!-- OMERO icon (database cylinder) -->
-  <ellipse cx="205" cy="1030" rx="24" ry="10" fill="#1d4ed8"/>
-  <rect x="181" y="1030" width="48" height="42" fill="#1d4ed8"/>
-  <ellipse cx="205" cy="1072" rx="24" ry="10" fill="#1e40af"/>
-  <ellipse cx="205" cy="1030" rx="24" ry="10" fill="none" stroke="#0f172a" stroke-width="1.5"/>
-  <text x="270" y="1035" class="tiny">OMERO object store</text>
-  <text x="270" y="1056" class="tiny">images, labels, metadata</text>
+  <ellipse cx="690" cy="585" rx="24" ry="10" fill="#1d4ed8"/>
+  <rect x="666" y="585" width="48" height="36" fill="#1d4ed8"/>
+  <ellipse cx="690" cy="621" rx="24" ry="10" fill="#1e40af"/>
+  <ellipse cx="690" cy="585" rx="24" ry="10" fill="none" stroke="#0f172a" stroke-width="1.5"/>
+  <text x="750" y="588" class="tiny">images, labels, metadata</text>
+  <text x="750" y="608" class="tiny">dataset/query source</text>
 
-  <rect x="1410" y="960" width="320" height="170" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
-  <text x="1570" y="992" text-anchor="middle" class="workflow" style="font-size:16px;">BioImage Model Zoo</text>
+  <rect x="900" y="520" width="260" height="145" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="1030" y="550" text-anchor="middle" class="workflow" style="font-size:16px;">Human reviewer</text>
+  <!-- Human icon -->
+  <circle cx="965" cy="580" r="12" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+  <path d="M947 622 Q965 597 983 622" fill="none" stroke="#334155" stroke-width="3"/>
+  <line x1="965" y1="592" x2="965" y2="615" stroke="#334155" stroke-width="2.5"/>
+  <text x="1030" y="588" class="tiny">curation / correction</text>
+  <text x="1030" y="608" class="tiny">HITL feedback</text>
+
+  <rect x="1180" y="520" width="300" height="145" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="1330" y="550" text-anchor="middle" class="workflow" style="font-size:16px;">BioImage Model Zoo</text>
   <!-- Zoo icon (simplified package + globe) -->
-  <circle cx="1495" cy="1038" r="20" fill="#0ea5e9"/>
-  <path d="M1479 1038 H1511 M1495 1022 V1054" stroke="white" stroke-width="2"/>
-  <rect x="1530" y="1018" width="46" height="42" rx="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/>
-  <path d="M1530 1031 H1576" stroke="#92400e" stroke-width="1.5"/>
-  <text x="1588" y="1035" class="tiny">pretrained models</text>
-  <text x="1588" y="1056" class="tiny">publish target</text>
+  <circle cx="1248" cy="585" r="19" fill="#0ea5e9"/>
+  <path d="M1233 585 H1263 M1248 570 V600" stroke="white" stroke-width="2"/>
+  <rect x="1278" y="565" width="44" height="38" rx="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/>
+  <path d="M1278 577 H1322" stroke="#92400e" stroke-width="1.5"/>
+  <text x="1330" y="588" class="tiny">pretrained models</text>
+  <text x="1330" y="608" class="tiny">publish target</text>
 
-  <!-- External node connections -->
-  <path d="M420 1045 C640 1000, 930 900, 1085 820" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
-  <path d="M420 1010 C900 920, 1230 700, 1360 410" stroke="#0f766e" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
-  <path d="M1410 1030 C1320 980, 1240 900, 1190 820" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
-  <path d="M1410 1070 C1500 1010, 1545 920, 1505 820" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <!-- External hub connections -->
+  <path d="M750 520 C800 470, 980 430, 1135 410" stroke="#0f766e" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M750 665 C810 725, 930 770, 1085 820" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+
+  <path d="M1030 665 C980 720, 840 730, 650 740" stroke="#0284c7" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1030 665 C1090 730, 1200 780, 1295 820" stroke="#0ea5e9" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+
+  <path d="M1330 665 C1320 730, 1280 770, 1190 820" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1330 665 C1420 730, 1490 770, 1505 820" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
 
   <!-- FAIR/HITL cross-links -->
   <path d="M1360 410 C1320 500, 1240 610, 1190 820" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
