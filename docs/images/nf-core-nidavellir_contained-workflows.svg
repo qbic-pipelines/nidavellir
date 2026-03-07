@@ -16,7 +16,7 @@
 
   <rect x="0" y="0" width="1800" height="1320" fill="#f3f4f6"/>
   <text x="80" y="72" class="title">nf-core/nidavellir • workflow map (derived from README + Nextflow code)</text>
-  <text x="80" y="102" class="subtitle">White circles = modules/processes • Gray circles = scaffold stages • Gray blocks = workflows/subworkflows • File icons = outputs</text>
+  <text x="80" y="102" class="subtitle">White circles = modules/processes • Gray circles = scaffold stages • Gray blocks = workflows/subworkflows • File icons = outputs • external nodes = OMERO/BioImage Zoo</text>
 
   <!-- top-level utility workflow -->
   <rect x="70" y="130" width="1660" height="120" rx="20" fill="#d1d5db" opacity="0.55"/>
@@ -118,6 +118,34 @@
   <text x="1005" y="980" class="tiny">PYTORCH_MODEL_EVAL • BIOIMAGEIO_PUBLISH_MODEL • PACKAGE_TRAINING_ROCRATE</text>
   <text x="1005" y="1002" class="tiny">Current training workflow emits deterministic placeholder records while preserving stage schemas.</text>
 
+
+  <!-- External platform nodes -->
+  <rect x="120" y="960" width="300" height="170" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="270" y="992" text-anchor="middle" class="workflow" style="font-size:16px;">OMERO server</text>
+  <!-- OMERO icon (database cylinder) -->
+  <ellipse cx="205" cy="1030" rx="24" ry="10" fill="#1d4ed8"/>
+  <rect x="181" y="1030" width="48" height="42" fill="#1d4ed8"/>
+  <ellipse cx="205" cy="1072" rx="24" ry="10" fill="#1e40af"/>
+  <ellipse cx="205" cy="1030" rx="24" ry="10" fill="none" stroke="#0f172a" stroke-width="1.5"/>
+  <text x="270" y="1035" class="tiny">OMERO object store</text>
+  <text x="270" y="1056" class="tiny">images, labels, metadata</text>
+
+  <rect x="1410" y="960" width="320" height="170" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="1570" y="992" text-anchor="middle" class="workflow" style="font-size:16px;">BioImage Model Zoo</text>
+  <!-- Zoo icon (simplified package + globe) -->
+  <circle cx="1495" cy="1038" r="20" fill="#0ea5e9"/>
+  <path d="M1479 1038 H1511 M1495 1022 V1054" stroke="white" stroke-width="2"/>
+  <rect x="1530" y="1018" width="46" height="42" rx="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/>
+  <path d="M1530 1031 H1576" stroke="#92400e" stroke-width="1.5"/>
+  <text x="1588" y="1035" class="tiny">pretrained models</text>
+  <text x="1588" y="1056" class="tiny">publish target</text>
+
+  <!-- External node connections -->
+  <path d="M420 1045 C640 1000, 930 900, 1085 820" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M420 1010 C900 920, 1230 700, 1360 410" stroke="#0f766e" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1410 1030 C1320 980, 1240 900, 1190 820" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1410 1070 C1500 1010, 1545 920, 1505 820" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+
   <!-- FAIR/HITL cross-links -->
   <path d="M1360 410 C1320 500, 1240 610, 1190 820" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
   <path d="M650 740 C720 860, 930 900, 1085 820" stroke="#0ea5e9" stroke-width="5" fill="none" stroke-linecap="round"/>
@@ -152,13 +180,13 @@
     <text x="45" y="48" text-anchor="middle" class="file-label">*_labelled</text>
     <text x="45" y="63" text-anchor="middle" class="file-label">.ome.tif</text>
   </g>
-  <g transform="translate(1490 1080)">
+  <g transform="translate(1490 1130)">
     <rect x="0" y="0" width="94" height="98" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
     <path d="M70 0 L94 24 L70 24 Z" fill="#e2e8f0"/>
     <text x="47" y="45" text-anchor="middle" class="file-label">*.ro-crate</text>
     <text x="47" y="60" text-anchor="middle" class="file-label">(.zip path)</text>
   </g>
-  <g transform="translate(1000 1080)">
+  <g transform="translate(1000 1130)">
     <rect x="0" y="0" width="120" height="98" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
     <path d="M96 0 L120 24 L96 24 Z" fill="#e2e8f0"/>
     <text x="60" y="43" text-anchor="middle" class="file-label">fair_training_</text>
