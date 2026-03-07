@@ -70,7 +70,8 @@ workflow PIPELINE_INITIALISATION {
     Channel
         .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
         .map { meta, image_path, omero_id ->
-            def meta_with_source = omero_id ? meta + [omero_id: omero_id] : meta
+            def source_meta = meta + [image_path: image_path]
+            def meta_with_source = omero_id ? source_meta + [omero_id: omero_id] : source_meta
             return [ meta_with_source, file(image_path) ]
         }
         .set { ch_samplesheet }
