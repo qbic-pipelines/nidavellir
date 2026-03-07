@@ -15,10 +15,10 @@ Nidavellir is developed as a multi-stage bioimage ML workflow system with three 
 | Workflow track | Scope | Status in this repository |
 | -------------- | ----- | ------------------------- |
 | Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Scaffolded** (track selectable; stage plan logged; implementation pending). |
-| Inference | Convert images, run model inference, export masks/labelled outputs. | **Scaffolded** (track selectable; stage plan logged; implementation pending). |
+| Inference | Convert images, run model inference, export masks/labelled outputs. | **Partially implemented** (conversion + exports implemented; model inference step is a placeholder scaffold). |
 | Data storage | Persist images/labels and metadata in OMERO. | **Partially implemented** (`generate_ometiff` conversion path + OMERO upload manifest scaffold; optional live upload). |
 
-Current command-line execution supports the implemented data staging/storage path and scaffolded training/inference track selection. Future releases will expose additional lifecycle components as dedicated modules/subworkflows while preserving FAIR provenance outputs.
+Current command-line execution supports implemented data staging/storage workflows and a partially implemented inference track (with explicit placeholder for the model execution step). Future releases will expose remaining lifecycle components as dedicated modules/subworkflows while preserving FAIR provenance outputs.
 
 ## Samplesheet input
 
@@ -67,7 +67,7 @@ Use `--workflow_track` to select which workflow scaffold to run:
 - `data_storage` (implemented)
 - `generate_ometiff` (implemented conversion-only shortcut)
 - `training` (scaffolded: logs stage plan, implementation pending)
-- `inference` (scaffolded: logs stage plan, implementation pending)
+- `inference` (partially implemented: OME-Zarr staging + mask/labelled OME-TIFF export, with placeholder model step)
 
 `--pipeline_track` is retained as a backward-compatible alias. If both are set, `--workflow_track` takes precedence.
 
@@ -83,6 +83,28 @@ nextflow run nf-core/nidavellir \
   --input ./samplesheet.csv \
   --outdir ./results \
   --workflow_track generate_ometiff \
+  -profile docker
+```
+
+### Inference pipeline details
+
+The `--workflow_track inference` path currently implements:
+
+1. **Image conversion to OME-Zarr** using `bioformats2raw` (`BIOFORMATS2RAW` process).
+2. **Model inference placeholder scaffold** that currently passes staged OME-Zarr forward while splitting outputs into two semantic branches (mask + labelled).
+3. **Export to OME-TIFF** using `raw2ometiff` (`RAW2OMETIFF` process), creating:
+   - `<sample>_mask.ome.tif`
+   - `<sample>_labelled.ome.tif`
+
+The placeholder in step (2) is intentional and marks where a future dedicated model inference module/subworkflow should be inserted.
+
+Example (inference scaffold run):
+
+```bash
+nextflow run nf-core/nidavellir \
+  --input ./samplesheet.csv \
+  --outdir ./results \
+  --workflow_track inference \
   -profile docker
 ```
 

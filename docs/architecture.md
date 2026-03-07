@@ -37,11 +37,16 @@ Intended capabilities:
 
 ### Inference pipeline
 
-Intended capabilities:
+Current capabilities (partial implementation):
 
-- Convert images to OME-Zarr (NGFF).
-- Run model inference.
-- Export segmentation masks and labelled images.
+- Convert input images to OME-Zarr (NGFF) using `bioformats2raw`.
+- Execute a **placeholder scaffold** for model inference (explicit pass-through hook).
+- Export segmentation masks and labelled images to OME-TIFF using `raw2ometiff`.
+
+Design notes:
+
+- The placeholder is intentionally isolated between conversion and export so a real inference engine can be dropped in without changing upstream/downstream data contracts.
+- Export branches use suffix-aware naming (`_mask`, `_labelled`) to keep artefacts distinct per sample.
 
 ### Data storage pipeline
 
@@ -57,5 +62,6 @@ Nidavellir is designed to support human-in-the-loop workflows: corrected predict
 ## Implementation status
 
 - **Implemented / partially implemented**: Data storage track with conversion (`bioformats2raw -> raw2ometiff`), FAIR training-input metadata export, and OMERO upload scaffold (manifest-first; optional live upload).
-- **Scaffolded**: `training` and `inference` tracks are selectable and currently emit stage-plan logs only.
-- **Planned**: Full lifecycle components for training/evaluation/publication, inference outputs, and richer OMERO write-back workflows.
+- **Scaffolded**: `training` track is selectable and currently emits stage-plan logs only.
+- **Partially implemented**: `inference` track with OME-Zarr conversion and OME-TIFF export plus model-step placeholder scaffold.
+- **Planned**: Full lifecycle components for training/evaluation/publication, production inference engines/manifests, and richer OMERO write-back workflows.
