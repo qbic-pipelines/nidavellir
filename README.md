@@ -20,9 +20,17 @@
 
 ## Introduction
 
-**nf-core/nidavellir** is a Nextflow / nf-core workflow system for FAIR and reproducible bioimage machine learning pipelines.
+**nf-core/nidavellir** is a Nextflow / nf-core workflow for FAIR, reproducible, and extensible bioimage machine-learning workflows, with a focus on microscopy and medical-image segmentation.
 
-Beyond a single training or inference run, the project goal is to implement the **full human-in-the-loop (HITL) cycle**: dataset staging, model training, inference, expert correction/curation, and reintegration of corrected labels into the next training round. This lifecycle emphasis is conceptually aligned with practical interactive-segmentation workflows such as [Mesmer](https://www.nature.com/articles/s41587-021-01094-0) and [Cellpose](https://www.nature.com/articles/s41592-022-01663-4), while being delivered as a modular, reproducible nf-core workflow architecture.
+The pipeline is designed to support **iterative model development** rather than isolated single runs. In particular, Nidavellir targets a full **human-in-the-loop (HITL)** lifecycle: dataset staging, model pre-training or fine-tuning, inference, expert correction/curation, and reintegration of corrected annotations for the next training cycle. This lifecycle perspective aligns with established interactive-segmentation practice (for example [Mesmer](https://www.nature.com/articles/s41587-021-01094-0) and [Cellpose](https://www.nature.com/articles/s41592-022-01663-4)) while preserving nf-core standards for portability, provenance, and repeatability.
+
+From a data stewardship perspective, Nidavellir follows FAIR principles ([Wilkinson *et al.* 2016](https://www.nature.com/articles/sdata201618)) and FAIR4RS recommendations for reusable research software ([Barker *et al.* 2022](https://doi.org/10.1038/s41597-022-01710-x)). Concretely, this includes support for community formats and metadata standards such as OME-NGFF / OME-Zarr ([Moore *et al.* 2021](https://doi.org/10.1038/s41592-021-01326-w)) and machine-readable provenance artifacts (for example RO-Crate, [Soiland-Reyes *et al.* 2022](https://doi.org/10.48550/arXiv.2201.07917)).
+
+At the modeling level, the intended workflow supports modern training regimes spanning:
+
+- **Self-supervised or weakly supervised pre-training** (for representation learning under limited labels; e.g. [Taleb *et al.* 2020](https://arxiv.org/abs/2006.06650), [Azizi *et al.* 2021](https://openaccess.thecvf.com/content/ICCV2021/html/Azizi_Big_Self-Supervised_Models_Advance_Medical_Image_Classification_ICCV_2021_paper.html));
+- **Task-specific supervised fine-tuning** on curated labels (e.g. U-Net-style segmentation, [Ronneberger *et al.* 2015](https://arxiv.org/abs/1505.04597));
+- **Active expert-in-the-loop refinement cycles**, where model outputs are corrected and recycled into subsequent training rounds (as demonstrated in practical tools such as Mesmer and Cellpose).
 
 ### Current implemented capabilities (MVP)
 
@@ -58,8 +66,51 @@ Nidavellir is being developed as a modular system that covers the full ML lifecy
 
 The architecture is explicitly designed for end-to-end human-in-the-loop learning, where model predictions are reviewed and corrected by experts, persisted as curated labels, and cycled back into subsequent retraining iterations.
 
+### Workflow diagram (current tracks and target HITL loop)
+
+```mermaid
+flowchart TD
+    A[Input samplesheet / OMERO refs] --> B{workflow_track}
+
+    B --> C[data_storage]
+    C --> C1[Stage images + labels in OMERO]
+    C --> C2[Optional conversion path]
+
+    B --> D[generate_ometiff]
+    D --> D1[BIOFORMATS2RAW]
+    D1 --> D2[RAW2OMETIFF]
+
+    B --> E[training]
+    E --> E1[1. dataset staging]
+    E1 --> E2[2. parent-model staging]
+    E2 --> E3[3. training]
+    E3 --> E4[4. evaluation]
+    E4 --> E5[5. publication]
+    E5 --> E6[6. RO-Crate packaging]
+
+    B --> F[inference]
+    F --> F1[BIOFORMATS2RAW]
+    F1 --> F2[Inference runner (placeholder)]
+    F2 --> F3[RAW2OMETIFF exports<br/>mask + labelled]
+
+    F3 --> G[Expert review & correction]
+    G --> H[Curated labels]
+    H --> E1
+```
+
 > [!NOTE]
 > Some lifecycle components described above are planned and may not yet be implemented in the current release.
+
+### Scientific and FAIR orientation
+
+Nidavellir is intentionally positioned at the intersection of reproducible workflows, data interoperability, and computational pathology / bioimage AI lifecycle management:
+
+- **Reproducibility and portability:** nf-core and Nextflow enable standardized execution across HPC, cloud, and container runtimes.
+- **FAIR-by-construction outputs:** standardized file formats, explicit metadata capture, software version pinning, and RO-Crate-oriented packaging facilitate downstream reuse.
+- **Model lifecycle traceability:** staged inputs, parent-model provenance, and evaluation/publication scaffolds support auditable progression from pre-training through deployment-ready checkpoints.
+- **HITL scientific practice:** expert feedback is treated as first-class training signal, enabling continuous performance improvement under domain shift and label scarcity.
+
+In practical terms, this architecture is suitable for teams implementing foundation-model adaptation pipelines for bioimaging, where self-supervised pre-training can be combined with supervised fine-tuning and iterative expert curation to improve generalization and robustness in real laboratory settings.
 
 ## Usage
 
@@ -210,6 +261,18 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 <!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
+
+For conceptual and methodological context, the following references are particularly relevant to Nidavellir's design goals:
+
+- Wilkinson MD, Dumontier M, Aalbersberg IJJ, *et al.* The FAIR Guiding Principles for scientific data management and stewardship. _Sci Data_ 2016. doi: [10.1038/sdata.2016.18](https://doi.org/10.1038/sdata.2016.18).
+- Barker M, Chue Hong NP, Katz DS, *et al.* Introducing the FAIR Principles for research software. _Sci Data_ 2022. doi: [10.1038/s41597-022-01710-x](https://doi.org/10.1038/s41597-022-01710-x).
+- Moore J, Allan C, Besson S, *et al.* OME-NGFF: a next-generation file format for expanding bioimaging data-access strategies. _Nat Methods_ 2021. doi: [10.1038/s41592-021-01326-w](https://doi.org/10.1038/s41592-021-01326-w).
+- Soiland-Reyes S, Sefton P, Crosas M, *et al.* Packaging research artefacts with RO-Crate. 2022. doi: [10.48550/arXiv.2201.07917](https://doi.org/10.48550/arXiv.2201.07917).
+- Greenwald NF, Miller G, Moen E, *et al.* Whole-cell segmentation of tissue images with human-level performance using large-scale data annotation and deep learning. _Nat Biotechnol._ 2021 (Mesmer). doi: [10.1038/s41587-021-01094-0](https://doi.org/10.1038/s41587-021-01094-0).
+- Pachitariu M, Stringer C. Cellpose 2.0: how to train your own model. _Nat Methods_ 2022. doi: [10.1038/s41592-022-01663-4](https://doi.org/10.1038/s41592-022-01663-4).
+- Taleb A, Lippert C, Klein T, Nabi M. Multimodal self-supervised learning for medical image analysis. 2020. arXiv: [2006.06650](https://arxiv.org/abs/2006.06650).
+- Azizi S, Mustafa B, Ryan F, *et al.* Big self-supervised models advance medical image classification. _ICCV_ 2021. [OpenAccess link](https://openaccess.thecvf.com/content/ICCV2021/html/Azizi_Big_Self-Supervised_Models_Advance_Medical_Image_Classification_ICCV_2021_paper.html).
+- Ronneberger O, Fischer P, Brox T. U-Net: Convolutional Networks for Biomedical Image Segmentation. _MICCAI_ 2015. arXiv: [1505.04597](https://arxiv.org/abs/1505.04597).
 
 You can cite the `nf-core` publication as follows:
 
