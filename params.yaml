@@ -1,0 +1,4 @@
+input: './samplesheet.csv'
+outdir: './results'
+workflow_track: 'generate_ometiff'
+

@@ -97,6 +97,55 @@ nextflow run nf-core/nidavellir \
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/nidavellir/usage) and the [parameter documentation](https://nf-co.re/nidavellir/parameters).
 
+### Reusable raw2ometiff configuration (team preset style)
+
+If you want to keep pipeline inputs separate from module-level converter flags, use two files:
+
+1. `params.yaml` for pipeline parameters (`input`, `outdir`, `workflow_track`).
+2. `raw2ometiff.config` for `RAW2OMETIFF` module arguments (`ext.args`).
+
+The repository now includes both files as ready-to-edit templates:
+
+- `params.yaml`
+- `raw2ometiff.config`
+
+`raw2ometiff.config` sets a default value and allows clean runtime override:
+
+```groovy
+params.raw2ometiff_args = params.raw2ometiff_args ?: '--compression LZW --max_workers 8'
+
+process {
+    withName: 'RAW2OMETIFF' {
+        ext.args = { params.raw2ometiff_args }
+    }
+}
+```
+
+Run with defaults from both files:
+
+```bash
+nextflow run nf-core/nidavellir \
+  -profile docker \
+  -params-file params.yaml \
+  -c raw2ometiff.config
+```
+
+Override raw2ometiff behavior at launch time without editing config files:
+
+```bash
+nextflow run nf-core/nidavellir \
+  -profile docker \
+  -params-file params.yaml \
+  -c raw2ometiff.config \
+  --raw2ometiff_args '--rgb --compression JPEG --quality 0.85 --max_workers 8'
+```
+
+How this works:
+
+- `params.yaml` keeps run inputs and output location reusable and portable.
+- `raw2ometiff.config` centralizes module-level CLI tuning via `ext.args`.
+- `--raw2ometiff_args` is a single override hook suitable for team presets and automation.
+
 ### Workflow track selection
 
 Use `--workflow_track` to select the high-level flow:
