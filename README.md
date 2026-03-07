@@ -26,6 +26,8 @@ The pipeline is designed to support **iterative model development** rather than 
 
 From a data stewardship perspective, Nidavellir follows FAIR principles ([Wilkinson *et al.* 2016](https://www.nature.com/articles/sdata201618)) and FAIR4RS recommendations for reusable research software ([Barker *et al.* 2022](https://doi.org/10.1038/s41597-022-01710-x)). Concretely, this includes support for community formats and metadata standards such as OME-NGFF / OME-Zarr ([Moore *et al.* 2021](https://doi.org/10.1038/s41592-021-01326-w)) and machine-readable provenance artifacts (for example RO-Crate, [Soiland-Reyes *et al.* 2022](https://doi.org/10.48550/arXiv.2201.07917)).
 
+Nidavellir is also designed to operate with **OMERO servers** as institutional and collaborative data repositories. The intended lifecycle includes staging datasets from OMERO, tracking OMERO object identifiers during processing, and pushing curated bioimage outputs (images, labels, annotations, and derived artifacts) back into OMERO for iterative model improvement and governance. This aligns the workflow with the OMERO platform's role in scalable bioimage data management and sharing ([Allan *et al.* 2012](https://www.nature.com/articles/nmeth.1896), [Li *et al.* 2016](https://www.nature.com/articles/nmeth.3789), [Burel *et al.* 2015](https://doi.org/10.3389/fninf.2015.00047)).
+
 At the modeling level, the intended workflow supports modern training regimes spanning:
 
 - **Self-supervised or weakly supervised pre-training** (for representation learning under limited labels; e.g. [Taleb *et al.* 2020](https://arxiv.org/abs/2006.06650), [Azizi *et al.* 2021](https://openaccess.thecvf.com/content/ICCV2021/html/Azizi_Big_Self-Supervised_Models_Advance_Medical_Image_Classification_ICCV_2021_paper.html));
@@ -132,6 +134,12 @@ Nidavellir is intentionally positioned at the intersection of reproducible workf
 - **HITL scientific practice:** expert feedback is treated as first-class training signal, enabling continuous performance improvement under domain shift and label scarcity.
 
 In practical terms, this architecture is suitable for teams implementing foundation-model adaptation pipelines for bioimaging, where self-supervised pre-training can be combined with supervised fine-tuning and iterative expert curation to improve generalization and robustness in real laboratory settings.
+
+### OMERO scientific references
+
+- Allan C, Burel J-M, Moore J, et al. OMERO: flexible, model-driven data management for experimental biology. *Nature Methods* (2012). https://www.nature.com/articles/nmeth.1896
+- Li S, Burel J-M, Cousins S, et al. IDR: an open platform for image data integration and publication. *Nature Methods* (2016). https://www.nature.com/articles/nmeth.3789
+- Burel J-M, Allen C, Williams E, et al. Publishing and Sharing Multi-Dimensional Image Data with OMERO. *Frontiers in Neuroinformatics* (2015). https://doi.org/10.3389/fninf.2015.00047
 
 ## Usage
 
