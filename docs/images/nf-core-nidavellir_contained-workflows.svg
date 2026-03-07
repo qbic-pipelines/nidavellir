@@ -1,146 +1,221 @@
-<svg width="1600" height="1200" viewBox="0 0 1600 1200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">nf-core/nidavellir contained workflows diagram</title>
-  <desc id="desc">Diagram showing data_storage, generate_ometiff, training scaffold and inference scaffold workflows and their HITL feedback loop.</desc>
+<svg width="1800" height="1500" viewBox="0 0 1800 1500" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">nf-core/nidavellir workflow map (code-aligned)</title>
+  <desc id="desc">Metro-style map aligned to current Nextflow implementation showing main workflow selector, workflow tracks, subworkflows, module-level nodes, scaffold stages, tools and output artifacts.</desc>
+
   <defs>
     <style>
-      .title { font: 700 30px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #222; }
-      .subtitle { font: 500 17px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #444; }
-      .track-title { font: 700 22px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #203040; }
-      .node { font: 500 14px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #1f2937; }
-      .small { font: 500 13px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #4b5563; }
+      .title { font: 700 34px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 17px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #334155; }
+      .workflow { font: 700 19px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #111827; }
+      .line-label { font: 700 15px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #111827; }
+      .station { font: 500 13px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #111827; }
+      .tiny { font: 500 12px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #334155; }
+      .file-label { font: 600 12px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #1e293b; }
     </style>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L10,3 L0,6 Z" fill="#4B5563" />
-    </marker>
   </defs>
 
-  <rect x="0" y="0" width="1600" height="1200" fill="#f8fafc"/>
-  <text x="70" y="70" class="title">nf-core/nidavellir • Contained workflow tracks</text>
-  <text x="70" y="100" class="subtitle">Current track DAGs and target human-in-the-loop lifecycle</text>
+  <rect x="0" y="0" width="1800" height="1500" fill="#f3f4f6"/>
+  <text x="80" y="72" class="title">nf-core/nidavellir • workflow map (derived from README + Nextflow code)</text>
+  <text x="80" y="102" class="subtitle">White circles = modules/processes • Gray circles = scaffold stages • Gray blocks = workflows/subworkflows • File icons = outputs • external nodes = OMERO / BioImage Zoo / Human reviewer</text>
 
-  <rect x="70" y="150" width="380" height="72" rx="16" fill="#DBEAFE" stroke="#60A5FA" stroke-width="2"/>
-  <text x="260" y="180" text-anchor="middle" class="node">Input samplesheet and</text>
-  <text x="260" y="202" text-anchor="middle" class="node">optional OMERO references</text>
+  <!-- top-level utility workflow -->
+  <rect x="70" y="130" width="1660" height="120" rx="20" fill="#d1d5db" opacity="0.55"/>
+  <text x="95" y="165" class="workflow">Top-level orchestration (main.nf)</text>
+  <path d="M140 205 H780" stroke="#64748b" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="140" cy="205" r="10" fill="#111827" stroke="#64748b" stroke-width="3"/>
+  <circle cx="330" cy="205" r="9" fill="white" stroke="#64748b" stroke-width="5"/>
+  <circle cx="560" cy="205" r="9" fill="white" stroke="#64748b" stroke-width="5"/>
+  <circle cx="780" cy="205" r="10" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="120" y="185" class="station">start</text>
+  <text x="286" y="185" class="station">PIPELINE_INITIALISATION</text>
+  <text x="500" y="185" class="station">NFCORE_NIDAVELLIR selector</text>
+  <text x="720" y="185" class="station">PIPELINE_COMPLETION</text>
+  <text x="765" y="185" class="station">end</text>
+  <text x="880" y="210" class="tiny">subworkflows/local/utils_nfcore_nidavellir_pipeline + nf-core utils_{nfschema,nextflow,nfcore}_pipeline</text>
 
-  <rect x="560" y="150" width="300" height="72" rx="36" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
-  <text x="710" y="194" text-anchor="middle" class="node">workflow_track selector</text>
+  <!-- workflow containers -->
+  <rect x="70" y="280" width="830" height="300" rx="30" fill="#d1d5db" opacity="0.65"/>
+  <text x="100" y="320" class="workflow">Workflow track: generate_ometiff (implemented)</text>
 
-  <path d="M450 186 L560 186" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="930" y="280" width="830" height="300" rx="30" fill="#d1d5db" opacity="0.65"/>
+  <text x="960" y="320" class="workflow">Workflow track: data_storage (implemented / partial live upload)</text>
 
-  <!-- data_storage -->
-  <rect x="70" y="280" width="330" height="380" rx="18" fill="#ECFDF5" stroke="#34D399" stroke-width="2"/>
-  <text x="235" y="320" text-anchor="middle" class="track-title">data_storage</text>
+  <rect x="70" y="760" width="830" height="300" rx="30" fill="#d1d5db" opacity="0.65"/>
+  <text x="100" y="800" class="workflow">Workflow track: inference (partial; model step placeholder)</text>
 
-  <rect x="105" y="350" width="260" height="62" rx="12" fill="white" stroke="#A7F3D0" stroke-width="2"/>
-  <text x="235" y="388" text-anchor="middle" class="node">Parse samplesheet metadata</text>
+  <rect x="930" y="760" width="830" height="580" rx="30" fill="#d1d5db" opacity="0.65"/>
+  <text x="960" y="800" class="workflow">Workflow track: training (6-stage scaffold)</text>
 
-  <rect x="105" y="445" width="260" height="62" rx="12" fill="white" stroke="#A7F3D0" stroke-width="2"/>
-  <text x="235" y="474" text-anchor="middle" class="node">Stage images and labels</text>
-  <text x="235" y="494" text-anchor="middle" class="node">in OMERO</text>
+  <!-- generate_ometiff line -->
+  <path d="M130 410 H820" stroke="#4f46e5" stroke-width="12" stroke-linecap="round"/>
+  <text x="170" y="380" class="line-label">Subworkflow GENERATE_OMETIFF</text>
+  <circle cx="130" cy="410" r="10" fill="#111827" stroke="#4f46e5" stroke-width="3"/>
+  <circle cx="300" cy="410" r="10" fill="white" stroke="#4f46e5" stroke-width="6"/>
+  <circle cx="510" cy="410" r="10" fill="white" stroke="#4f46e5" stroke-width="6"/>
+  <circle cx="820" cy="410" r="10" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="110" y="388" class="station">start</text>
+  <text x="250" y="440" class="station">BIOFORMATS2RAW</text>
+  <text x="460" y="440" class="station">RAW2OMETIFF</text>
+  <text x="797" y="388" class="station">end</text>
+  <text x="250" y="465" class="tiny">tool: bioformats2raw → output: &lt;sample&gt;.ome.zarr</text>
+  <text x="460" y="465" class="tiny">tool: raw2ometiff → output: ometiff/&lt;sample&gt;.ome.tif</text>
 
-  <rect x="105" y="540" width="260" height="62" rx="12" fill="white" stroke="#A7F3D0" stroke-width="2"/>
-  <text x="235" y="578" text-anchor="middle" class="node">Persist dataset</text>
-  <text x="235" y="598" text-anchor="middle" class="node">annotations and IDs</text>
+  <!-- data_storage line -->
+  <path d="M980 410 H1700" stroke="#0f766e" stroke-width="12" stroke-linecap="round"/>
+  <text x="1020" y="380" class="line-label">Workflow NIDAVELLIR(mode=full) → DATA_STORAGE_OMERO</text>
+  <circle cx="980" cy="410" r="10" fill="#111827" stroke="#0f766e" stroke-width="3"/>
+  <circle cx="1135" cy="410" r="10" fill="white" stroke="#0f766e" stroke-width="6"/>
+  <circle cx="1360" cy="410" r="10" fill="white" stroke="#0f766e" stroke-width="6"/>
+  <circle cx="1700" cy="410" r="10" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="956" y="388" class="station">start</text>
+  <text x="1060" y="440" class="station">GENERATE_OMETIFF (subworkflow)</text>
+  <text x="1300" y="440" class="station">OMERO_UPLOAD_OMETIFF</text>
+  <text x="1678" y="388" class="station">end</text>
+  <text x="1298" y="465" class="tiny">tool: omero-cli (dry-run manifest by default)</text>
 
-  <path d="M235 412 L235 445" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M235 507 L235 540" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- inference line -->
+  <path d="M130 890 H820" stroke="#0284c7" stroke-width="12" stroke-linecap="round"/>
+  <text x="170" y="860" class="line-label">Workflow INFERENCE_PIPELINE</text>
+  <circle cx="130" cy="890" r="10" fill="#111827" stroke="#0284c7" stroke-width="3"/>
+  <circle cx="280" cy="890" r="10" fill="white" stroke="#0284c7" stroke-width="6"/>
+  <circle cx="470" cy="890" r="10" fill="#d1d5db" stroke="#0284c7" stroke-width="6"/>
+  <circle cx="650" cy="890" r="10" fill="white" stroke="#0284c7" stroke-width="6"/>
+  <circle cx="820" cy="890" r="10" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="110" y="868" class="station">start</text>
+  <text x="228" y="920" class="station">BIOFORMATS2RAW</text>
+  <text x="420" y="920" class="station">placeholder inference split</text>
+  <text x="605" y="920" class="station">RAW2OMETIFF x2</text>
+  <text x="798" y="868" class="station">end</text>
+  <text x="223" y="945" class="tiny">module: nf-core/bioformats2raw</text>
+  <text x="410" y="945" class="tiny">not a module yet (pass-through to mask + labelled channels)</text>
+  <text x="597" y="945" class="tiny">local/raw2ometiff aliased as RAW2OMETIFF_MASKS + RAW2OMETIFF_LABELS</text>
 
-  <!-- generate_ometiff -->
-  <rect x="440" y="280" width="330" height="280" rx="18" fill="#EEF2FF" stroke="#818CF8" stroke-width="2"/>
-  <text x="605" y="320" text-anchor="middle" class="track-title">generate_ometiff</text>
+  <!-- training scaffold line -->
+  <path d="M980 1010 H1700" stroke="#ea580c" stroke-width="12" stroke-linecap="round"/>
+  <text x="1020" y="980" class="line-label">Workflow TRAINING_PIPELINE (stages currently scaffolded in workflows/training.nf)</text>
+  <circle cx="980" cy="1010" r="10" fill="#111827" stroke="#ea580c" stroke-width="3"/>
+  <circle cx="1085" cy="1010" r="10" fill="#d1d5db" stroke="#ea580c" stroke-width="6"/>
+  <circle cx="1190" cy="1010" r="10" fill="#d1d5db" stroke="#ea580c" stroke-width="6"/>
+  <circle cx="1295" cy="1010" r="10" fill="#d1d5db" stroke="#ea580c" stroke-width="6"/>
+  <circle cx="1400" cy="1010" r="10" fill="#d1d5db" stroke="#ea580c" stroke-width="6"/>
+  <circle cx="1505" cy="1010" r="10" fill="#d1d5db" stroke="#ea580c" stroke-width="6"/>
+  <circle cx="1610" cy="1010" r="10" fill="#d1d5db" stroke="#ea580c" stroke-width="6"/>
+  <circle cx="1700" cy="1010" r="10" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="956" y="988" class="station">start</text>
+  <text x="1052" y="1040" class="station">1 Stage dataset</text>
+  <text x="1158" y="1040" class="station">2 Stage parent model</text>
+  <text x="1262" y="1040" class="station">3 Train CV</text>
+  <text x="1368" y="1040" class="station">4 Evaluate</text>
+  <text x="1470" y="1040" class="station">5 Publish</text>
+  <text x="1578" y="1040" class="station">6 Package RO-Crate</text>
+  <text x="1678" y="988" class="station">end</text>
+  <text x="1050" y="1065" class="tiny">all 6 stages are currently workflow-level placeholder maps (stable contracts)</text>
 
-  <rect x="475" y="360" width="260" height="70" rx="12" fill="white" stroke="#C7D2FE" stroke-width="2"/>
-  <text x="605" y="389" text-anchor="middle" class="node">BIOFORMATS2RAW converts</text>
-  <text x="605" y="409" text-anchor="middle" class="node">source image to OME-Zarr</text>
+  <!-- optional local modules callout -->
+  <rect x="980" y="1090" width="710" height="150" rx="16" fill="#e5e7eb" stroke="#94a3b8" stroke-width="2"/>
+  <text x="1005" y="1120" class="line-label">Reusable local modules present in repo (not all wired to training workflow yet)</text>
+  <text x="1005" y="1148" class="tiny">OMERO_STAGE_TRAINING_DATASET • BIOIMAGEIO_STAGE_PARENT_MODEL • PYTORCH_CROSSVAL_TRAIN</text>
+  <text x="1005" y="1170" class="tiny">PYTORCH_MODEL_EVAL • BIOIMAGEIO_PUBLISH_MODEL • PACKAGE_TRAINING_ROCRATE</text>
+  <text x="1005" y="1192" class="tiny">Current training workflow emits deterministic placeholder records while preserving stage schemas.</text>
 
-  <rect x="475" y="460" width="260" height="70" rx="12" fill="white" stroke="#C7D2FE" stroke-width="2"/>
-  <text x="605" y="489" text-anchor="middle" class="node">RAW2OMETIFF exports</text>
-  <text x="605" y="509" text-anchor="middle" class="node">analysis-ready OME-TIFF</text>
 
-  <path d="M605 430 L605 460" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- External platform nodes (center hub) -->
+  <rect x="620" y="520" width="260" height="145" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="750" y="550" text-anchor="middle" class="workflow" style="font-size:16px;">OMERO server</text>
+  <!-- OMERO icon (database cylinder) -->
+  <ellipse cx="690" cy="585" rx="24" ry="10" fill="#1d4ed8"/>
+  <rect x="666" y="585" width="48" height="36" fill="#1d4ed8"/>
+  <ellipse cx="690" cy="621" rx="24" ry="10" fill="#1e40af"/>
+  <ellipse cx="690" cy="585" rx="24" ry="10" fill="none" stroke="#0f172a" stroke-width="1.5"/>
+  <text x="750" y="588" class="tiny">images, labels, metadata</text>
+  <text x="750" y="608" class="tiny">dataset/query source</text>
 
-  <!-- training -->
-  <rect x="810" y="280" width="330" height="700" rx="18" fill="#FFF7ED" stroke="#FB923C" stroke-width="2"/>
-  <text x="975" y="320" text-anchor="middle" class="track-title">training scaffold</text>
+  <rect x="900" y="520" width="260" height="145" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="1030" y="550" text-anchor="middle" class="workflow" style="font-size:16px;">Human reviewer</text>
+  <!-- Human icon -->
+  <circle cx="965" cy="580" r="12" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+  <path d="M947 622 Q965 597 983 622" fill="none" stroke="#334155" stroke-width="3"/>
+  <line x1="965" y1="592" x2="965" y2="615" stroke="#334155" stroke-width="2.5"/>
+  <text x="1030" y="588" class="tiny">curation / correction</text>
+  <text x="1030" y="608" class="tiny">HITL feedback</text>
 
-  <rect x="845" y="350" width="260" height="68" rx="12" fill="white" stroke="#FDBA74" stroke-width="2"/>
-  <text x="975" y="379" text-anchor="middle" class="node">Stage 1: dataset staging and</text>
-  <text x="975" y="399" text-anchor="middle" class="node">manifest contracts</text>
+  <rect x="1180" y="520" width="300" height="145" rx="20" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="1330" y="550" text-anchor="middle" class="workflow" style="font-size:16px;">BioImage Model Zoo</text>
+  <!-- Zoo icon (simplified package + globe) -->
+  <circle cx="1248" cy="585" r="19" fill="#0ea5e9"/>
+  <path d="M1233 585 H1263 M1248 570 V600" stroke="white" stroke-width="2"/>
+  <rect x="1278" y="565" width="44" height="38" rx="6" fill="#f59e0b" stroke="#92400e" stroke-width="1.5"/>
+  <path d="M1278 577 H1322" stroke="#92400e" stroke-width="1.5"/>
+  <text x="1330" y="588" class="tiny">pretrained models</text>
+  <text x="1330" y="608" class="tiny">publish target</text>
 
-  <rect x="845" y="440" width="260" height="68" rx="12" fill="white" stroke="#FDBA74" stroke-width="2"/>
-  <text x="975" y="469" text-anchor="middle" class="node">Stage 2: parent model staging</text>
-  <text x="975" y="489" text-anchor="middle" class="node">(BioImage.io / local)</text>
+  <!-- External hub connections -->
+  <path d="M750 520 C800 470, 980 430, 1135 410" stroke="#0f766e" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M750 665 C810 785, 930 900, 1085 1010" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
 
-  <rect x="845" y="530" width="260" height="68" rx="12" fill="white" stroke="#FDBA74" stroke-width="2"/>
-  <text x="975" y="559" text-anchor="middle" class="node">Stage 3: training runner</text>
-  <text x="975" y="579" text-anchor="middle" class="node">placeholder</text>
+  <path d="M1030 665 C980 810, 840 860, 650 890" stroke="#0284c7" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1030 665 C1090 820, 1200 920, 1295 1010" stroke="#0ea5e9" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
 
-  <rect x="845" y="620" width="260" height="68" rx="12" fill="white" stroke="#FDBA74" stroke-width="2"/>
-  <text x="975" y="649" text-anchor="middle" class="node">Stage 4: evaluation placeholder</text>
-  <text x="975" y="669" text-anchor="middle" class="node">metrics and QA summaries</text>
+  <path d="M1330 665 C1320 820, 1280 920, 1190 1010" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1330 665 C1420 820, 1490 920, 1505 1010" stroke="#ea580c" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
 
-  <rect x="845" y="710" width="260" height="68" rx="12" fill="white" stroke="#FDBA74" stroke-width="2"/>
-  <text x="975" y="739" text-anchor="middle" class="node">Stage 5: publication scaffold</text>
-  <text x="975" y="759" text-anchor="middle" class="node">for model package outputs</text>
+  <!-- FAIR/HITL cross-links -->
+  <path d="M1360 410 C1320 620, 1240 860, 1190 1010" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M650 890 C740 980, 930 1030, 1085 1010" stroke="#0ea5e9" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <text x="710" y="870" class="tiny">HITL feedback concept: curated inference outputs feed later training cycles</text>
 
-  <rect x="845" y="800" width="260" height="68" rx="12" fill="white" stroke="#FDBA74" stroke-width="2"/>
-  <text x="975" y="829" text-anchor="middle" class="node">Stage 6: RO-Crate packaging</text>
-  <text x="975" y="849" text-anchor="middle" class="node">for FAIR provenance bundle</text>
+  <!-- file icons -->
+  <g transform="translate(590 475)">
+    <rect x="0" y="0" width="72" height="88" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M50 0 L72 22 L50 22 Z" fill="#e2e8f0"/>
+    <text x="36" y="52" text-anchor="middle" class="file-label">ome.zarr</text>
+  </g>
+  <g transform="translate(690 475)">
+    <rect x="0" y="0" width="72" height="88" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M50 0 L72 22 L50 22 Z" fill="#e2e8f0"/>
+    <text x="36" y="52" text-anchor="middle" class="file-label">ome.tif</text>
+  </g>
+  <g transform="translate(1540 475)">
+    <rect x="0" y="0" width="76" height="90" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M53 0 L76 23 L53 23 Z" fill="#e2e8f0"/>
+    <text x="38" y="48" text-anchor="middle" class="file-label">*_omero_</text>
+    <text x="38" y="63" text-anchor="middle" class="file-label">upload.json</text>
+  </g>
+  <g transform="translate(610 955)">
+    <rect x="0" y="0" width="90" height="94" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M66 0 L90 24 L66 24 Z" fill="#e2e8f0"/>
+    <text x="45" y="48" text-anchor="middle" class="file-label">*_mask</text>
+    <text x="45" y="63" text-anchor="middle" class="file-label">.ome.tif</text>
+  </g>
+  <g transform="translate(715 955)">
+    <rect x="0" y="0" width="90" height="94" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M66 0 L90 24 L66 24 Z" fill="#e2e8f0"/>
+    <text x="45" y="48" text-anchor="middle" class="file-label">*_labelled</text>
+    <text x="45" y="63" text-anchor="middle" class="file-label">.ome.tif</text>
+  </g>
+  <g transform="translate(1490 1260)">
+    <rect x="0" y="0" width="94" height="98" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M70 0 L94 24 L70 24 Z" fill="#e2e8f0"/>
+    <text x="47" y="45" text-anchor="middle" class="file-label">*.ro-crate</text>
+    <text x="47" y="60" text-anchor="middle" class="file-label">(.zip path)</text>
+  </g>
+  <g transform="translate(1000 1260)">
+    <rect x="0" y="0" width="120" height="98" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M96 0 L120 24 L96 24 Z" fill="#e2e8f0"/>
+    <text x="60" y="43" text-anchor="middle" class="file-label">fair_training_</text>
+    <text x="60" y="58" text-anchor="middle" class="file-label">inputs.ndjson</text>
+  </g>
 
-  <path d="M975 418 L975 440" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M975 508 L975 530" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M975 598 L975 620" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M975 688 L975 710" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M975 778 L975 800" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-
-  <!-- inference -->
-  <rect x="1180" y="280" width="350" height="500" rx="18" fill="#F5F3FF" stroke="#A78BFA" stroke-width="2"/>
-  <text x="1355" y="320" text-anchor="middle" class="track-title">inference scaffold</text>
-
-  <rect x="1215" y="350" width="280" height="78" rx="12" fill="white" stroke="#C4B5FD" stroke-width="2"/>
-  <text x="1355" y="382" text-anchor="middle" class="node">BIOFORMATS2RAW creates</text>
-  <text x="1355" y="403" text-anchor="middle" class="node">sample OME-Zarr inputs</text>
-
-  <rect x="1215" y="445" width="280" height="78" rx="12" fill="white" stroke="#C4B5FD" stroke-width="2"/>
-  <text x="1355" y="477" text-anchor="middle" class="node">Inference runner scaffold</text>
-  <text x="1355" y="498" text-anchor="middle" class="node">(current pass-through)</text>
-
-  <rect x="1215" y="540" width="280" height="78" rx="12" fill="white" stroke="#C4B5FD" stroke-width="2"/>
-  <text x="1355" y="572" text-anchor="middle" class="node">RAW2OMETIFF exports mask</text>
-  <text x="1355" y="593" text-anchor="middle" class="node">and labelled OME-TIFF</text>
-
-  <rect x="1215" y="635" width="280" height="78" rx="12" fill="white" stroke="#C4B5FD" stroke-width="2"/>
-  <text x="1355" y="667" text-anchor="middle" class="node">Collect per-sample metadata</text>
-  <text x="1355" y="688" text-anchor="middle" class="node">and software versions</text>
-
-  <path d="M1355 428 L1355 445" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M1355 523 L1355 540" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-  <path d="M1355 618 L1355 635" stroke="#4B5563" stroke-width="2" marker-end="url(#arrow)"/>
-
-  <!-- selector connections -->
-  <path d="M660 222 C600 250, 320 250, 235 280" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M690 222 C670 250, 620 250, 605 280" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M730 222 C840 250, 950 240, 975 280" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M760 222 C940 260, 1280 240, 1355 280" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-
-  <!-- HITL loop -->
-  <rect x="1160" y="840" width="390" height="70" rx="12" fill="#E0F2FE" stroke="#38BDF8" stroke-width="2"/>
-  <text x="1355" y="869" text-anchor="middle" class="node">Expert review and correction</text>
-  <text x="1355" y="889" text-anchor="middle" class="node">in annotation tools</text>
-
-  <rect x="1160" y="940" width="390" height="70" rx="12" fill="#E0F2FE" stroke="#38BDF8" stroke-width="2"/>
-  <text x="1355" y="969" text-anchor="middle" class="node">Curated labels and QC feedback</text>
-  <text x="1355" y="989" text-anchor="middle" class="node">for retraining</text>
-
-  <rect x="560" y="1030" width="520" height="90" rx="14" fill="#DCFCE7" stroke="#4ADE80" stroke-width="2"/>
-  <text x="820" y="1065" text-anchor="middle" class="node">Versioned model and provenance artifact</text>
-  <text x="820" y="1087" text-anchor="middle" class="node">for redeployment</text>
-
-  <path d="M1355 713 L1355 840" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M1355 910 L1355 940" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M1160 975 C1080 975, 1040 950, 975 868" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M975 868 L975 1030" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-  <path d="M1080 1075 C1250 1040, 1325 910, 1355 523" stroke="#4B5563" stroke-width="2.5" marker-end="url(#arrow)"/>
-
-  <text x="1130" y="1030" class="small">feeds inference</text>
+  <!-- legend -->
+  <rect x="70" y="1415" width="1200" height="60" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <circle cx="110" cy="1445" r="10" fill="white" stroke="#334155" stroke-width="5"/>
+  <text x="136" y="1450" class="tiny">module / process node</text>
+  <circle cx="330" cy="1445" r="10" fill="#d1d5db" stroke="#334155" stroke-width="5"/>
+  <text x="356" y="1450" class="tiny">workflow scaffold stage (placeholder logic)</text>
+  <circle cx="675" cy="1445" r="10" fill="#111827" stroke="#334155" stroke-width="3"/>
+  <text x="701" y="1450" class="tiny">workflow start</text>
+  <circle cx="870" cy="1445" r="10" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="896" y="1450" class="tiny">workflow end</text>
+  <rect x="1025" y="1430" width="56" height="30" rx="8" fill="#d1d5db" opacity="0.75"/>
+  <text x="1093" y="1450" class="tiny">workflow / subworkflow container</text>
 </svg>
