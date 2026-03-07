@@ -86,6 +86,46 @@ nextflow run nf-core/nidavellir \
   -profile docker
 ```
 
+### Training scaffold parameters (stages 1-6)
+
+The training track is currently scaffold-only: selecting `--workflow_track training` logs the stage plan, but does **not** yet execute dataset queries, model retrieval, training, evaluation, publication API calls, or RO-Crate packaging. The parameter groups below are available now to capture planning/provenance metadata and to keep future runs reproducible when implementation lands.
+
+1. **Stage (1) OMERO query scaffold inputs**
+   - `--training_stage1_omero_tags`
+   - `--training_stage1_omero_kv_filters`
+   - `--training_stage1_omero_server_ref`
+2. **Stage (2) parent model selection scaffold metadata**
+   - `--training_stage2_parent_model_id`
+   - `--training_stage2_parent_model_doi`
+   - `--training_stage2_parent_model_uri`
+   - `--training_stage2_parent_model_version`
+3. **Stages (3)/(4) training/eval scaffold metadata**
+   - `--training_stage34_fold_count`
+   - `--training_stage34_seed`
+   - `--training_stage34_hyperparams_json`
+4. **Stage (5) publication scaffold metadata**
+   - `--training_stage5_target_collection`
+   - `--training_stage5_target_account`
+   - `--training_stage5_publication_metadata_json`
+5. **Stage (6) RO-Crate scaffold metadata**
+   - `--training_stage6_rocrate_creator`
+   - `--training_stage6_rocrate_organization`
+   - `--training_stage6_rocrate_license`
+   - `--training_stage6_rocrate_run_title`
+
+Example (training scaffold metadata run):
+
+```bash
+nextflow run nf-core/nidavellir \
+  --input ./samplesheet.csv \
+  --outdir ./results \
+  --workflow_track training \
+  --training_stage34_fold_count 5 \
+  --training_stage34_seed 42 \
+  --training_stage2_parent_model_id 10.5281/zenodo.1234567 \
+  -profile docker
+```
+
 ### Inference pipeline details
 
 The `--workflow_track inference` path currently implements:
