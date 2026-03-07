@@ -1,6 +1,6 @@
-<svg width="1700" height="1200" viewBox="0 0 1700 1200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">nf-core/nidavellir workflow metro map with workflow containers</title>
-  <desc id="desc">Metro-style map where white station dots denote modules and large gray rounded rectangles denote workflows: inference, data storage, and training with HITL feedback.</desc>
+<svg width="1700" height="1220" viewBox="0 0 1700 1220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">nf-core/nidavellir workflow metro map with workflow containers, start/end nodes and file artifacts</title>
+  <desc id="desc">Metro-style map where white dots denote modules, gray rounded rectangles denote workflows, each workflow has explicit start and end nodes, and file icons highlight key artifacts such as OME-TIFF and CSV outputs.</desc>
 
   <defs>
     <style>
@@ -10,113 +10,150 @@
       .line-label { font: 700 16px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #111827; }
       .station { font: 500 13px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #111827; }
       .legend { font: 500 13px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #334155; }
+      .file-label { font: 600 12px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #1e293b; }
     </style>
     <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
       <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.15"/>
     </filter>
   </defs>
 
-  <rect x="0" y="0" width="1700" height="1200" fill="#f3f4f6"/>
+  <rect x="0" y="0" width="1700" height="1220" fill="#f3f4f6"/>
 
   <text x="90" y="72" class="title">nf-core/nidavellir • Workflow metro map</text>
-  <text x="90" y="102" class="subtitle">White dots = modules • Gray containers = workflows</text>
+  <text x="90" y="102" class="subtitle">White dots = modules • Gray containers = workflows • File icons = key artifacts</text>
 
-  <!-- Workflow containers (large gray rectangles) -->
-  <rect x="80" y="150" width="760" height="290" rx="34" fill="#d1d5db" opacity="0.65"/>
+  <!-- Workflow containers -->
+  <rect x="80" y="150" width="760" height="310" rx="34" fill="#d1d5db" opacity="0.65"/>
   <text x="110" y="188" class="workflow">Inference workflow</text>
 
-  <rect x="900" y="150" width="720" height="290" rx="34" fill="#d1d5db" opacity="0.65"/>
+  <rect x="900" y="150" width="720" height="310" rx="34" fill="#d1d5db" opacity="0.65"/>
   <text x="930" y="188" class="workflow">Data storage workflow (OMERO)</text>
 
-  <rect x="250" y="620" width="1110" height="470" rx="38" fill="#d1d5db" opacity="0.65"/>
-  <text x="290" y="662" class="workflow">Training workflow</text>
+  <rect x="250" y="640" width="1110" height="470" rx="38" fill="#d1d5db" opacity="0.65"/>
+  <text x="290" y="682" class="workflow">Training workflow</text>
 
-  <!-- External systems containers -->
-  <rect x="560" y="470" width="260" height="120" rx="22" fill="#e5e7eb" stroke="#94a3b8" stroke-width="2"/>
-  <text x="690" y="522" text-anchor="middle" class="workflow" style="font-size: 16px;">OMERO server</text>
-  <text x="690" y="545" text-anchor="middle" class="station">images + labels + metadata</text>
+  <!-- External systems -->
+  <rect x="560" y="490" width="260" height="120" rx="22" fill="#e5e7eb" stroke="#94a3b8" stroke-width="2"/>
+  <text x="690" y="542" text-anchor="middle" class="workflow" style="font-size: 16px;">OMERO server</text>
+  <text x="690" y="565" text-anchor="middle" class="station">images + labels + metadata</text>
 
-  <rect x="940" y="470" width="300" height="120" rx="22" fill="#e5e7eb" stroke="#94a3b8" stroke-width="2"/>
-  <text x="1090" y="522" text-anchor="middle" class="workflow" style="font-size: 16px;">BioImage Zoo / Hugging Face</text>
-  <text x="1090" y="545" text-anchor="middle" class="station">parent model source</text>
+  <rect x="940" y="490" width="300" height="120" rx="22" fill="#e5e7eb" stroke="#94a3b8" stroke-width="2"/>
+  <text x="1090" y="542" text-anchor="middle" class="workflow" style="font-size: 16px;">BioImage Zoo / Hugging Face</text>
+  <text x="1090" y="565" text-anchor="middle" class="station">parent model source</text>
 
-  <!-- Main trunk -->
-  <path d="M120 300 H260" stroke="#64748b" stroke-width="14" stroke-linecap="round"/>
-  <circle cx="140" cy="300" r="12" fill="#ef4444" stroke="#111827" stroke-width="3"/>
-  <text x="118" y="275" class="station">start</text>
-  <circle cx="260" cy="300" r="12" fill="white" stroke="#64748b" stroke-width="6" filter="url(#softShadow)"/>
-  <text x="285" y="305" class="station">workflow_track selector</text>
+  <!-- Inference workflow line with explicit start/end -->
+  <path d="M120 310 H810" stroke="#0ea5e9" stroke-width="12" stroke-linecap="round"/>
+  <text x="360" y="278" class="line-label">inference scaffold</text>
+  <circle cx="120" cy="310" r="11" fill="#111827" stroke="#0ea5e9" stroke-width="4"/>
+  <text x="90" y="285" class="station">start</text>
 
-  <!-- Inference line -->
-  <path d="M260 300 H760" stroke="#0ea5e9" stroke-width="12" stroke-linecap="round"/>
-  <text x="360" y="270" class="line-label">inference scaffold</text>
-  <circle cx="380" cy="300" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
-  <circle cx="500" cy="300" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
-  <circle cx="640" cy="300" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
-  <circle cx="760" cy="300" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
-  <text x="360" y="330" class="station">BIOFORMATS2RAW</text>
-  <text x="480" y="330" class="station">inference runner</text>
-  <text x="620" y="330" class="station">RAW2OMETIFF</text>
-  <text x="740" y="330" class="station">collect metadata</text>
+  <circle cx="240" cy="310" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
+  <circle cx="380" cy="310" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
+  <circle cx="520" cy="310" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
+  <circle cx="660" cy="310" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
+  <circle cx="810" cy="310" r="11" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="780" y="285" class="station">end</text>
 
-  <!-- Human review node and transfer -->
-  <path d="M760 300 H900" stroke="#0ea5e9" stroke-width="12" stroke-linecap="round"/>
-  <circle cx="900" cy="300" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
-  <text x="920" y="305" class="station">expert review / correction</text>
+  <text x="214" y="340" class="station">BIOFORMATS2RAW</text>
+  <text x="350" y="340" class="station">inference runner</text>
+  <text x="495" y="340" class="station">RAW2OMETIFF</text>
+  <text x="620" y="340" class="station">collect metadata</text>
 
-  <!-- Data storage line -->
-  <path d="M900 300 H1540" stroke="#14b8a6" stroke-width="12" stroke-linecap="round"/>
-  <text x="1030" y="270" class="line-label">data_storage</text>
-  <circle cx="1040" cy="300" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
-  <circle cx="1180" cy="300" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
-  <circle cx="1320" cy="300" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
-  <circle cx="1460" cy="300" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
-  <text x="1000" y="330" class="station">convert / stage labels</text>
-  <text x="1145" y="330" class="station">upload OMERO image</text>
-  <text x="1275" y="330" class="station">attach tags + ROIs</text>
-  <text x="1435" y="330" class="station">persist IDs / annotations</text>
+  <!-- Human review bridge -->
+  <path d="M810 310 H900" stroke="#0ea5e9" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="900" cy="310" r="10" fill="white" stroke="#0ea5e9" stroke-width="6"/>
+  <text x="920" y="315" class="station">expert review / correction</text>
 
-  <!-- generate_ometiff helper branch -->
-  <path d="M1040 300 C1015 250, 980 230, 940 230" stroke="#6366f1" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="940" cy="230" r="10" fill="white" stroke="#6366f1" stroke-width="6"/>
-  <text x="780" y="220" class="line-label">generate_ometiff</text>
-  <text x="955" y="235" class="station">BIOFORMATS2RAW ↔ RAW2OMETIFF</text>
+  <!-- Data storage workflow line with explicit start/end -->
+  <path d="M900 310 H1560" stroke="#14b8a6" stroke-width="12" stroke-linecap="round"/>
+  <text x="1030" y="278" class="line-label">data_storage</text>
+  <circle cx="900" cy="310" r="11" fill="#111827" stroke="#14b8a6" stroke-width="4"/>
+  <text x="868" y="285" class="station">start</text>
+
+  <circle cx="1040" cy="310" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
+  <circle cx="1180" cy="310" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
+  <circle cx="1320" cy="310" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
+  <circle cx="1460" cy="310" r="10" fill="white" stroke="#14b8a6" stroke-width="6"/>
+  <circle cx="1560" cy="310" r="11" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="1534" y="285" class="station">end</text>
+
+  <text x="1000" y="340" class="station">convert / stage labels</text>
+  <text x="1146" y="340" class="station">upload OMERO image</text>
+  <text x="1275" y="340" class="station">attach tags + ROIs</text>
+  <text x="1436" y="340" class="station">persist IDs / annotations</text>
+
+  <!-- generate_ometiff helper branch with start/end -->
+  <path d="M1040 310 C1015 258, 980 238, 940 238 H850" stroke="#6366f1" stroke-width="10" stroke-linecap="round"/>
+  <text x="780" y="226" class="line-label">generate_ometiff</text>
+  <circle cx="1040" cy="310" r="10" fill="white" stroke="#6366f1" stroke-width="5"/>
+  <circle cx="940" cy="238" r="10" fill="white" stroke="#6366f1" stroke-width="6"/>
+  <circle cx="850" cy="238" r="11" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="834" y="218" class="station">end</text>
+  <text x="955" y="243" class="station">BIOFORMATS2RAW ↔ RAW2OMETIFF</text>
 
   <!-- Links to systems -->
-  <path d="M1180 300 C1180 390, 1100 430, 1090 470" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
-  <path d="M900 300 C860 390, 740 430, 690 470" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1180 310 C1180 400, 1100 450, 1090 490" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M900 310 C860 400, 740 450, 690 490" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
 
-  <!-- Training line inside training workflow -->
-  <path d="M300 900 H1310" stroke="#f97316" stroke-width="14" stroke-linecap="round"/>
-  <text x="360" y="870" class="line-label">training scaffold</text>
+  <!-- Training workflow with explicit start/end -->
+  <path d="M300 920 H1310" stroke="#f97316" stroke-width="14" stroke-linecap="round"/>
+  <text x="360" y="888" class="line-label">training scaffold</text>
 
-  <circle cx="380" cy="900" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
-  <circle cx="530" cy="900" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
-  <circle cx="680" cy="900" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
-  <circle cx="830" cy="900" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
-  <circle cx="980" cy="900" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
-  <circle cx="1130" cy="900" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
-  <circle cx="1310" cy="900" r="11" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <circle cx="300" cy="920" r="11" fill="#111827" stroke="#f97316" stroke-width="4"/>
+  <text x="270" y="895" class="station">start</text>
+  <circle cx="380" cy="920" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
+  <circle cx="530" cy="920" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
+  <circle cx="680" cy="920" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
+  <circle cx="830" cy="920" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
+  <circle cx="980" cy="920" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
+  <circle cx="1130" cy="920" r="10" fill="white" stroke="#f97316" stroke-width="6"/>
+  <circle cx="1310" cy="920" r="11" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="1284" y="895" class="station">end</text>
 
-  <text x="350" y="930" class="station">Stage 1 dataset staging</text>
-  <text x="492" y="930" class="station">Stage 2 parent model</text>
-  <text x="646" y="930" class="station">Stage 3 training</text>
-  <text x="804" y="930" class="station">Stage 4 evaluate</text>
-  <text x="955" y="930" class="station">Stage 5 publish</text>
-  <text x="1100" y="930" class="station">Stage 6 RO-Crate</text>
-  <text x="1286" y="930" class="station">artifact out</text>
+  <text x="350" y="950" class="station">Stage 1 dataset staging</text>
+  <text x="492" y="950" class="station">Stage 2 parent model</text>
+  <text x="646" y="950" class="station">Stage 3 training</text>
+  <text x="804" y="950" class="station">Stage 4 evaluate</text>
+  <text x="955" y="950" class="station">Stage 5 publish</text>
+  <text x="1100" y="950" class="station">Stage 6 RO-Crate</text>
+
+  <!-- File icons (paper style) -->
+  <g transform="translate(560 360)">
+    <rect x="0" y="0" width="66" height="84" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M45 0 L66 20 L45 20 Z" fill="#e2e8f0"/>
+    <text x="33" y="50" text-anchor="middle" class="file-label">ome.tiff</text>
+  </g>
+  <g transform="translate(1200 358)">
+    <rect x="0" y="0" width="66" height="84" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M45 0 L66 20 L45 20 Z" fill="#e2e8f0"/>
+    <text x="33" y="50" text-anchor="middle" class="file-label">csv</text>
+  </g>
+  <g transform="translate(1038 975)">
+    <rect x="0" y="0" width="66" height="84" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M45 0 L66 20 L45 20 Z" fill="#e2e8f0"/>
+    <text x="33" y="50" text-anchor="middle" class="file-label">ro-crate</text>
+  </g>
+  <g transform="translate(1288 975)">
+    <rect x="0" y="0" width="66" height="84" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <path d="M45 0 L66 20 L45 20 Z" fill="#e2e8f0"/>
+    <text x="33" y="50" text-anchor="middle" class="file-label">json</text>
+  </g>
 
   <!-- Feedback / dependency lines -->
-  <path d="M690 590 C690 720, 530 760, 530 900" stroke="#64748b" stroke-width="3" fill="none"/>
-  <path d="M1090 590 C1090 710, 980 760, 980 900" stroke="#64748b" stroke-width="3" fill="none"/>
-  <path d="M1460 300 C1560 340, 1590 760, 1130 900" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
-  <path d="M1310 900 C1210 1040, 620 1040, 380 900" stroke="#0ea5e9" stroke-width="8" fill="none" stroke-linecap="round"/>
-  <text x="760" y="1068" class="legend">HITL feedback loop returns curated labels/QC to retraining</text>
+  <path d="M690 610 C690 740, 530 780, 530 920" stroke="#64748b" stroke-width="3" fill="none"/>
+  <path d="M1090 610 C1090 730, 980 780, 980 920" stroke="#64748b" stroke-width="3" fill="none"/>
+  <path d="M1460 310 C1560 350, 1590 780, 1130 920" stroke="#64748b" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+  <path d="M1310 920 C1210 1060, 620 1060, 380 920" stroke="#0ea5e9" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <text x="760" y="1088" class="legend">HITL feedback loop returns curated labels/QC to retraining</text>
 
   <!-- Legend -->
-  <rect x="90" y="1110" width="560" height="58" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
-  <circle cx="130" cy="1139" r="10" fill="white" stroke="#334155" stroke-width="5"/>
-  <text x="155" y="1144" class="legend">White dots: modules</text>
-  <rect x="340" y="1124" width="52" height="30" rx="8" fill="#d1d5db" opacity="0.75"/>
-  <text x="405" y="1144" class="legend">Gray blocks: workflows</text>
+  <rect x="90" y="1130" width="780" height="58" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <circle cx="130" cy="1159" r="10" fill="white" stroke="#334155" stroke-width="5"/>
+  <text x="155" y="1164" class="legend">White dots: modules</text>
+  <circle cx="334" cy="1159" r="10" fill="#111827" stroke="#334155" stroke-width="3"/>
+  <text x="358" y="1164" class="legend">Dark dots: workflow starts</text>
+  <circle cx="560" cy="1159" r="10" fill="#ef4444" stroke="#111827" stroke-width="3"/>
+  <text x="584" y="1164" class="legend">Red dots: workflow ends</text>
+  <rect x="742" y="1144" width="52" height="30" rx="8" fill="#d1d5db" opacity="0.75"/>
+  <text x="808" y="1164" class="legend">Gray blocks: workflows</text>
 </svg>
