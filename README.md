@@ -70,32 +70,53 @@ The architecture is explicitly designed for end-to-end human-in-the-loop learnin
 
 ```mermaid
 flowchart TD
-    A[Input samplesheet / OMERO refs] --> B{workflow_track}
+    A[Input samplesheet and optional OMERO references] --> B{workflow_track selector}
 
-    B --> C[data_storage]
-    C --> C1[Stage images + labels in OMERO]
-    C --> C2[Optional conversion path]
+    subgraph DS[Workflow data_storage]
+        direction TB
+        C1[Parse samplesheet metadata]
+        C2[Stage images and labels in OMERO]
+        C3[Persist dataset annotations and IDs]
+        C1 --> C2 --> C3
+    end
 
-    B --> D[generate_ometiff]
-    D --> D1[BIOFORMATS2RAW]
-    D1 --> D2[RAW2OMETIFF]
+    subgraph GO[Workflow generate_ometiff]
+        direction TB
+        D1[BIOFORMATS2RAW module converts source image to OME-Zarr]
+        D2[RAW2OMETIFF module exports analysis-ready OME-TIFF]
+        D1 --> D2
+    end
 
-    B --> E[training]
-    E --> E1[1. dataset staging]
-    E1 --> E2[2. parent-model staging]
-    E2 --> E3[3. training]
-    E3 --> E4[4. evaluation]
-    E4 --> E5[5. publication]
-    E5 --> E6[6. RO-Crate packaging]
+    subgraph TR[Workflow training scaffold]
+        direction TB
+        E1[Stage 1 dataset staging and manifest contracts]
+        E2[Stage 2 parent model staging from BioImage.io or local artifact]
+        E3[Stage 3 training runner placeholder for finetuning or pretraining]
+        E4[Stage 4 evaluation placeholder for metrics and QA summaries]
+        E5[Stage 5 publication scaffold for model package outputs]
+        E6[Stage 6 RO-Crate packaging for FAIR provenance bundle]
+        E1 --> E2 --> E3 --> E4 --> E5 --> E6
+    end
 
-    B --> F[inference]
-    F --> F1[BIOFORMATS2RAW]
-    F1 --> F2[Inference runner (placeholder)]
-    F2 --> F3[RAW2OMETIFF exports<br/>mask + labelled]
+    subgraph INF[Workflow inference scaffold]
+        direction TB
+        F1[BIOFORMATS2RAW module creates sample OME-Zarr inputs]
+        F2[Inference runner scaffold currently pass-through placeholder]
+        F3[RAW2OMETIFF module exports mask and labelled OME-TIFF outputs]
+        F4[Collect per-sample inference metadata and software versions]
+        F1 --> F2 --> F3 --> F4
+    end
 
-    F3 --> G[Expert review & correction]
-    G --> H[Curated labels]
+    B --> DS
+    B --> GO
+    B --> TR
+    B --> INF
+
+    F3 --> G[Expert review and correction in annotation tools]
+    G --> H[Curated labels and QC feedback]
     H --> E1
+    E6 --> I[Versioned model and provenance artifact for redeployment]
+    I --> F2
 ```
 
 > [!NOTE]
