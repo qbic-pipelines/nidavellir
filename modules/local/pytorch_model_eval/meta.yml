@@ -1,0 +1,39 @@
+name: "pytorch_model_eval"
+description: Stage (4) scaffold for evaluating a trained PyTorch model on a validation split.
+keywords:
+  - pytorch
+  - evaluation
+  - validation
+  - scaffold
+tools:
+  - "placeholder":
+      description: "Scaffold module for future PyTorch evaluation and metrics reporting."
+      homepage: "https://pytorch.org/"
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map
+    - trained_model:
+        type: file
+        description: Trained model artifact from stage (3)
+    - validation_split:
+        type: file
+        description: Validation split descriptor or dataset partition file
+output:
+  - eval_bundle:
+    - meta:
+        type: map
+        description: Sample metadata map
+    - "*_eval_metrics.json":
+        type: file
+        description: Placeholder model evaluation metrics JSON
+    - "*_eval_descriptor.yml":
+        type: file
+        description: Placeholder evaluation contract and provenance descriptor
+    - "*_trained_model_passthrough.*":
+        type: file
+        description: Pass-through copy of trained model for downstream lineage
+  - versions:
+    - "versions.yml":
+        type: file
+        description: Software versions file
