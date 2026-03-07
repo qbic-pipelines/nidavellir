@@ -56,5 +56,6 @@ Nidavellir is designed to support human-in-the-loop workflows: corrected predict
 
 ## Implementation status
 
-- **Implemented**: MVP staging workflow that validates a training samplesheet, converts images to OME-Zarr via `bioformats2raw`, and emits machine-readable training metadata.
-- **In progress / planned**: Full lifecycle components for model training, evaluation, publication, inference outputs, and OMERO write-back workflows.
+- **Implemented / partially implemented**: Data storage track with conversion (`bioformats2raw -> raw2ometiff`), FAIR training-input metadata export, and OMERO upload scaffold (manifest-first; optional live upload).
+- **Scaffolded**: `training` and `inference` tracks are selectable and currently emit stage-plan logs only.
+- **Planned**: Full lifecycle components for training/evaluation/publication, inference outputs, and richer OMERO write-back workflows.

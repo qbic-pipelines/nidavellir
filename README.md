@@ -93,6 +93,18 @@ nextflow run nf-core/nidavellir \
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/nidavellir/usage) and the [parameter documentation](https://nf-co.re/nidavellir/parameters).
 
+### Workflow track selection
+
+Use `--workflow_track` to select the high-level flow:
+
+- `data_storage`: data storage flow (supports `--data_storage_mode full|generate_ometiff`)
+- `generate_ometiff`: conversion-only shortcut (`bioformats2raw -> raw2ometiff`)
+- `training`: scaffold track (stage plan logged; implementation pending)
+- `inference`: scaffold track (stage plan logged; implementation pending)
+
+`--pipeline_track` is retained as a backward-compatible alias. If both are set, `--workflow_track` takes precedence.
+
+
 ## Pipeline output
 
 To see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/nidavellir/results) tab on the nf-core website pipeline page.

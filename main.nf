@@ -16,6 +16,8 @@
 */
 
 include { NIDAVELLIR  } from './workflows/nidavellir'
+include { TRAINING_PIPELINE } from './workflows/training'
+include { INFERENCE_PIPELINE } from './workflows/inference'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_nidavellir_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_nidavellir_pipeline'
 /*
@@ -34,18 +36,32 @@ workflow NFCORE_NIDAVELLIR {
 
     main:
     ch_multiqc_report = Channel.empty()
+    def selected_workflow = params.workflow_track ?: params.pipeline_track
 
-    if (params.pipeline_track == 'data_storage') {
+    if (selected_workflow == 'data_storage') {
         NIDAVELLIR (
-            samplesheet
+            samplesheet,
+            params.data_storage_mode
         )
         ch_multiqc_report = NIDAVELLIR.out.multiqc_report
-    } else if (params.pipeline_track == 'training') {
-        error "Pipeline track 'training' is planned but not yet implemented in this release. Use --pipeline_track data_storage."
-    } else if (params.pipeline_track == 'inference') {
-        error "Pipeline track 'inference' is planned but not yet implemented in this release. Use --pipeline_track data_storage."
+    } else if (selected_workflow == 'generate_ometiff') {
+        NIDAVELLIR (
+            samplesheet,
+            'generate_ometiff'
+        )
+        ch_multiqc_report = NIDAVELLIR.out.multiqc_report
+    } else if (selected_workflow == 'training') {
+        TRAINING_PIPELINE (
+            samplesheet
+        )
+        ch_multiqc_report = TRAINING_PIPELINE.out.multiqc_report
+    } else if (selected_workflow == 'inference') {
+        INFERENCE_PIPELINE (
+            samplesheet
+        )
+        ch_multiqc_report = INFERENCE_PIPELINE.out.multiqc_report
     } else {
-        error "Unsupported --pipeline_track '${params.pipeline_track}'. Choose one of: training, inference, data_storage"
+        error "Unsupported workflow '${selected_workflow}'. Choose one of: training, inference, data_storage, generate_ometiff"
     }
 
     emit:
