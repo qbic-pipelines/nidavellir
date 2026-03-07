@@ -232,6 +232,17 @@
                     "description": "Generate upload manifests without performing OMERO import when true.",
                     "fa_icon": "fas fa-vial"
                 },
+                "workflow_track": {
+                    "type": "string",
+                    "description": "Select which workflow track to run. Overrides --pipeline_track when set.",
+                    "enum": [
+                        "training",
+                        "inference",
+                        "data_storage",
+                        "generate_ometiff"
+                    ],
+                    "fa_icon": "fas fa-sitemap"
+                },
                 "pipeline_track": {
                     "type": "string",
                     "default": "data_storage",

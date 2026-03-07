@@ -14,11 +14,11 @@ Nidavellir is developed as a multi-stage bioimage ML workflow system with three 
 
 | Workflow track | Scope | Status in this repository |
 | -------------- | ----- | ------------------------- |
-| Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Partially implemented** (currently staging + FAIR metadata export). |
-| Inference | Convert images, run model inference, export masks/labelled outputs. | **Planned**. |
-| Data storage | Persist images/labels and metadata in OMERO. | **Scaffolded** (OME-Zarr -> OME-TIFF -> OMERO upload manifest; optional live upload). |
+| Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Scaffolded** (track selectable; stage plan logged; implementation pending). |
+| Inference | Convert images, run model inference, export masks/labelled outputs. | **Scaffolded** (track selectable; stage plan logged; implementation pending). |
+| Data storage | Persist images/labels and metadata in OMERO. | **Partially implemented** (`generate_ometiff` conversion path + OMERO upload manifest scaffold; optional live upload). |
 
-Current command-line execution in this repository runs the implemented MVP staging flow. Future releases will expose additional lifecycle components as dedicated modules/subworkflows while preserving FAIR provenance outputs.
+Current command-line execution supports the implemented data staging/storage path and scaffolded training/inference track selection. Future releases will expose additional lifecycle components as dedicated modules/subworkflows while preserving FAIR provenance outputs.
 
 ## Samplesheet input
 
@@ -60,15 +60,18 @@ By default, uploads run in dry-run mode and only emit JSON manifests. To perform
 Optional: `--omero_project`, `--omero_dataset`, `--omero_metadata_ns`.
 
 
-### Selecting pipeline track and data storage mode
+### Selecting workflow type and data storage mode
 
-Use `--pipeline_track` to select the long-term workflow family:
+Use `--workflow_track` to select which workflow scaffold to run:
 
 - `data_storage` (implemented)
-- `training` (planned; not yet implemented)
-- `inference` (planned; not yet implemented)
+- `generate_ometiff` (implemented conversion-only shortcut)
+- `training` (scaffolded: logs stage plan, implementation pending)
+- `inference` (scaffolded: logs stage plan, implementation pending)
 
-Within the implemented `data_storage` track, use `--data_storage_mode` to choose:
+`--pipeline_track` is retained as a backward-compatible alias. If both are set, `--workflow_track` takes precedence.
+
+For `--workflow_track data_storage`, use `--data_storage_mode` to choose:
 
 - `full`: `generate_ometiff` + OMERO upload scaffold
 - `generate_ometiff`: conversion-only path (`bioformats2raw -> raw2ometiff`)
@@ -79,8 +82,7 @@ Example (conversion only):
 nextflow run nf-core/nidavellir \
   --input ./samplesheet.csv \
   --outdir ./results \
-  --pipeline_track data_storage \
-  --data_storage_mode generate_ometiff \
+  --workflow_track generate_ometiff \
   -profile docker
 ```
 

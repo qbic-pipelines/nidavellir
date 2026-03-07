@@ -17,6 +17,7 @@ workflow NIDAVELLIR {
 
     take:
     ch_samplesheet // channel: tuple val(meta), path(image) read in from --input
+    mode           // string: data storage execution mode
 
     main:
     ch_versions = Channel.empty()
@@ -25,29 +26,25 @@ workflow NIDAVELLIR {
     ch_staged_ometiff = Channel.empty()
     ch_omero_upload_manifest = Channel.empty()
 
-    if (params.data_storage_mode == 'generate_ometiff') {
+    def effective_data_storage_mode = mode ?: params.data_storage_mode
+
+    if (effective_data_storage_mode == 'generate_ometiff') {
         GENERATE_OMETIFF(ch_samplesheet)
         ch_versions = ch_versions.mix(GENERATE_OMETIFF.out.versions)
         ch_staged_omezarr = GENERATE_OMETIFF.out.staged_omezarr
         ch_staged_ometiff = GENERATE_OMETIFF.out.staged_ometiff
-    } else if (params.data_storage_mode == 'full') {
+    } else if (effective_data_storage_mode == 'full') {
         DATA_STORAGE_OMERO(ch_samplesheet)
         ch_versions = ch_versions.mix(DATA_STORAGE_OMERO.out.versions)
         ch_staged_omezarr = DATA_STORAGE_OMERO.out.staged_omezarr
         ch_staged_ometiff = DATA_STORAGE_OMERO.out.staged_ometiff
         ch_omero_upload_manifest = DATA_STORAGE_OMERO.out.omero_upload_manifest
     } else {
-        error "Unsupported --data_storage_mode '${params.data_storage_mode}'. Choose one of: generate_ometiff, full"
+        error "Unsupported --data_storage_mode '${effective_data_storage_mode}'. Choose one of: generate_ometiff, full"
     }
 
-    // 4) FAIR output packaging (MVP: line-delimited JSON summary for downstream RO-Crate generation)
+    // FAIR output packaging (MVP: line-delimited JSON summary for downstream RO-Crate generation)
     ch_staged_omezarr
-    // 3) Data storage pipeline: convert to OME-Zarr -> OME-TIFF -> upload to OMERO with metadata manifest
-    DATA_STORAGE_OMERO(ch_samplesheet)
-    ch_versions = ch_versions.mix(DATA_STORAGE_OMERO.out.versions)
-
-    // 4) FAIR output packaging (MVP: line-delimited JSON summary for downstream RO-Crate generation)
-    DATA_STORAGE_OMERO.out.staged_omezarr
         .map { meta, omezarr ->
             def record = [
                 sample: meta.id,
@@ -82,12 +79,6 @@ workflow NIDAVELLIR {
     fair_training_inputs  = ch_fair_training_inputs   // channel: path("fair_training_inputs.ndjson")
     multiqc_report        = ch_multiqc_report         // channel: empty placeholder for pipeline completion hooks
     versions              = ch_versions               // channel: [ path(versions.yml) ]
-    staged_omezarr        = DATA_STORAGE_OMERO.out.staged_omezarr      // channel: tuple val(meta), path("*.ome.zarr")
-    staged_ometiff        = DATA_STORAGE_OMERO.out.staged_ometiff      // channel: tuple val(meta), path("*.ome.tif")
-    omero_upload_manifest = DATA_STORAGE_OMERO.out.omero_upload_manifest // channel: tuple val(meta), path("*_omero_upload.json")
-    fair_training_inputs  = ch_fair_training_inputs                    // channel: path("fair_training_inputs.ndjson")
-    multiqc_report        = ch_multiqc_report                          // channel: empty placeholder for pipeline completion hooks
-    versions              = ch_versions                                // channel: [ path(versions.yml) ]
 }
 
 /*
