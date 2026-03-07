@@ -265,6 +265,152 @@
                     "fa_icon": "fas fa-diagram-project"
                 }
             }
+        },
+        "stage1_omero_query_scaffold_options": {
+            "title": "Training stage (1): OMERO query scaffold inputs",
+            "type": "object",
+            "fa_icon": "fas fa-database",
+            "description": "Scaffold-only metadata for stage (1) dataset discovery from OMERO. These fields are recorded for provenance and planning; no automated OMERO query execution is implemented yet.",
+            "properties": {
+                "training_stage1_omero_tags": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Comma-separated OMERO tags to filter candidate training images during stage (1) planning (scaffold metadata only).",
+                    "help_text": "Example: tissue=liver,stain=dapi. Currently logged for scaffold provenance; query execution is not yet implemented.",
+                    "fa_icon": "fas fa-tags"
+                },
+                "training_stage1_omero_kv_filters": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Path to JSON file containing key-value filter rules for stage (1) OMERO selection scaffold.",
+                    "fa_icon": "fas fa-filter"
+                },
+                "training_stage1_omero_server_ref": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Human-readable OMERO server reference identifier for stage (1) planning records (for example prod-eu-omero).",
+                    "fa_icon": "fas fa-server"
+                }
+            }
+        },
+        "stage2_parent_model_selection_options": {
+            "title": "Training stage (2): parent model selection",
+            "type": "object",
+            "fa_icon": "fas fa-brain",
+            "description": "Scaffold metadata describing the parent model intended for transfer learning in stage (2). These parameters are not yet wired to a model download/execution module.",
+            "properties": {
+                "training_stage2_parent_model_id": {
+                    "type": "string",
+                    "default": null,
+                    "description": "BioImage Model Zoo model ID selected as parent model in stage (2) scaffold.",
+                    "fa_icon": "fas fa-fingerprint"
+                },
+                "training_stage2_parent_model_doi": {
+                    "type": "string",
+                    "default": null,
+                    "description": "DOI of the parent model artifact for stage (2) provenance capture.",
+                    "fa_icon": "fas fa-link"
+                },
+                "training_stage2_parent_model_uri": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Direct URI for the parent model package (for example a model zoo resource URL).",
+                    "fa_icon": "fas fa-globe"
+                },
+                "training_stage2_parent_model_version": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Optional version pin or digest for immutable parent model selection in stage (2) scaffold.",
+                    "fa_icon": "fas fa-code-branch"
+                }
+            }
+        },
+        "stage34_training_eval_scaffold_options": {
+            "title": "Training stages (3)/(4): training and evaluation scaffold metadata",
+            "type": "object",
+            "fa_icon": "fas fa-sliders",
+            "description": "Run-level metadata for planned cross-validation training and evaluation stages. Current training track implementation logs scaffold stages only and does not execute model training yet.",
+            "properties": {
+                "training_stage34_fold_count": {
+                    "type": "integer",
+                    "default": 5,
+                    "minimum": 2,
+                    "description": "Planned number of cross-validation folds for stages (3)/(4) scaffold metadata.",
+                    "fa_icon": "fas fa-layer-group"
+                },
+                "training_stage34_seed": {
+                    "type": "integer",
+                    "default": 42,
+                    "description": "Deterministic seed recorded for stage (3)/(4) scaffold configuration.",
+                    "fa_icon": "fas fa-dice"
+                },
+                "training_stage34_hyperparams_json": {
+                    "type": "string",
+                    "format": "file-path",
+                    "default": null,
+                    "description": "Path to JSON file containing planned model/training hyperparameters for scaffold documentation.",
+                    "fa_icon": "fas fa-file-code"
+                }
+            }
+        },
+        "stage5_publication_options": {
+            "title": "Training stage (5): publication scaffold options",
+            "type": "object",
+            "fa_icon": "fas fa-upload",
+            "description": "Scaffold metadata for model publication targets. Stage (5) API calls are not implemented yet; fields are retained for FAIR planning and provenance.",
+            "properties": {
+                "training_stage5_target_collection": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Target collection/project identifier for stage (5) publication planning.",
+                    "fa_icon": "fas fa-book"
+                },
+                "training_stage5_target_account": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Target account or owner identifier for publication endpoint selection in stage (5).",
+                    "fa_icon": "fas fa-user-circle"
+                },
+                "training_stage5_publication_metadata_json": {
+                    "type": "string",
+                    "format": "file-path",
+                    "default": null,
+                    "description": "Path to JSON document with additional publication metadata supported by the target API (scaffold-only currently).",
+                    "fa_icon": "fas fa-file-export"
+                }
+            }
+        },
+        "stage6_rocrate_metadata_options": {
+            "title": "Training stage (6): RO-Crate metadata",
+            "type": "object",
+            "fa_icon": "fas fa-box-archive",
+            "description": "RO-Crate metadata fields used by the stage (6) packaging scaffold. FAIR metadata generation is scaffolded; full artifact packaging automation is pending.",
+            "properties": {
+                "training_stage6_rocrate_creator": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Creator name(s) to embed in stage (6) RO-Crate metadata.",
+                    "fa_icon": "fas fa-user-pen"
+                },
+                "training_stage6_rocrate_organization": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Organization or affiliation captured in RO-Crate metadata.",
+                    "fa_icon": "fas fa-building"
+                },
+                "training_stage6_rocrate_license": {
+                    "type": "string",
+                    "default": "CC-BY-4.0",
+                    "description": "License identifier for stage (6) RO-Crate outputs (for example CC-BY-4.0).",
+                    "fa_icon": "fas fa-scale-balanced"
+                },
+                "training_stage6_rocrate_run_title": {
+                    "type": "string",
+                    "default": null,
+                    "description": "Human-readable title for this run in RO-Crate metadata records.",
+                    "fa_icon": "fas fa-heading"
+                }
+            }
         }
     },
     "allOf": [
@@ -276,6 +422,21 @@
         },
         {
             "$ref": "#/$defs/generic_options"
+        },
+        {
+            "$ref": "#/$defs/stage1_omero_query_scaffold_options"
+        },
+        {
+            "$ref": "#/$defs/stage2_parent_model_selection_options"
+        },
+        {
+            "$ref": "#/$defs/stage34_training_eval_scaffold_options"
+        },
+        {
+            "$ref": "#/$defs/stage5_publication_options"
+        },
+        {
+            "$ref": "#/$defs/stage6_rocrate_metadata_options"
         }
     ]
 }
