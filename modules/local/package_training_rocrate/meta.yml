@@ -1,0 +1,43 @@
+name: package_training_rocrate
+
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map containing RO-Crate fields.
+    - training_artifact:
+        type: file
+        description: Training artifact path retained for provenance bookkeeping.
+
+output:
+  - artifact_path:
+      - - meta:
+            type: map
+            description: Sample metadata map.
+        - "*_training_rocrate_artifact_path.txt":
+            type: file
+            description: File containing path to produced RO-Crate artifact.
+  - summary:
+      - - meta:
+            type: map
+            description: Sample metadata map.
+        - "*_training_rocrate_summary.json":
+            type: file
+            description: JSON summary for downstream indexing.
+  - crate_zip:
+      - - meta:
+            type: map
+            description: Sample metadata map.
+        - "*_training_rocrate.zip":
+            type: file
+            description: Optional zipped RO-Crate.
+  - crate_dir:
+      - - meta:
+            type: map
+            description: Sample metadata map.
+        - "*_training_rocrate":
+            type: directory
+            description: Optional RO-Crate directory output.
+  - versions:
+      - versions.yml:
+            type: file
+            description: Tool versions.

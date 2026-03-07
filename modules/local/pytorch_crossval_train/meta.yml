@@ -1,0 +1,39 @@
+name: "pytorch_crossval_train"
+description: Stage (3) scaffold for cross-validation model training with pass-through parent model provenance.
+keywords:
+  - pytorch
+  - cross-validation
+  - training
+  - scaffold
+tools:
+  - "placeholder":
+      description: "Scaffold module for future PyTorch cross-validation training implementation."
+      homepage: "https://pytorch.org/"
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map
+    - dataset_descriptor:
+        type: file
+        description: Dataset descriptor artifact produced by stage (1)
+    - parent_model:
+        type: file
+        description: Parent model artifact used to initialize or continue training
+output:
+  - trained_bundle:
+    - meta:
+        type: map
+        description: Sample metadata map
+    - "*_trained_model.pt":
+        type: file
+        description: Placeholder trained model artifact
+    - "*_training_descriptor.json":
+        type: file
+        description: Placeholder training output descriptor with expected future contract
+    - "*_parent_model_passthrough.*":
+        type: file
+        description: Pass-through copy of parent model artifact for provenance consistency
+  - versions:
+    - "versions.yml":
+        type: file
+        description: Software versions file

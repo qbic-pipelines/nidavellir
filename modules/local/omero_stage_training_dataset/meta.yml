@@ -1,0 +1,38 @@
+name: "omero_stage_training_dataset"
+description: Stage (1) scaffold for resolving a training dataset from OMERO query contracts.
+keywords:
+  - omero
+  - dataset
+  - training
+  - scaffold
+tools:
+  - "placeholder":
+      description: "Scaffold module with typed query contracts for future OMERO integration."
+      homepage: "https://www.openmicroscopy.org/omero/"
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map
+    - omero_query:
+        type: map
+        description: |
+          Query contract map with two strategies:
+            - key_value.namespace (string)
+            - key_value.pairs (map<string,string>)
+            - tags.include (list<string>)
+            - tags.exclude (list<string>)
+output:
+  - dataset_contract:
+    - meta:
+        type: map
+        description: Sample metadata map
+    - "*_dataset_descriptor.json":
+        type: file
+        description: Placeholder dataset descriptor JSON for downstream stages
+    - "*_query_descriptor.yml":
+        type: file
+        description: Serialized OMERO query contract for provenance and later execution
+  - versions:
+    - "versions.yml":
+        type: file
+        description: Software versions file

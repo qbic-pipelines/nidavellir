@@ -1,0 +1,29 @@
+name: "omero_upload_ometiff"
+description: Upload OME-TIFF files to an OMERO server and emit upload manifests.
+keywords:
+  - omero
+  - ometiff
+  - upload
+tools:
+  - "omero-cli":
+      description: "CLI client for importing data and metadata into OMERO."
+      homepage: "https://www.openmicroscopy.org/omero/"
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map with optional OMERO annotation fields
+    - ometiff:
+        type: file
+        description: OME-TIFF file to upload
+output:
+  - upload_manifest:
+    - meta:
+        type: map
+        description: Sample metadata map
+    - "*_omero_upload.json":
+        type: file
+        description: Upload and metadata annotation manifest
+  - versions:
+    - "versions.yml":
+        type: file
+        description: Software versions file

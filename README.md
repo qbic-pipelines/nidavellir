@@ -10,7 +10,7 @@
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/version-%E2%89%A524.04.2-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
-[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.3.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.3.1)
+[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.5.2-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.5.2)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
@@ -20,42 +20,68 @@
 
 ## Introduction
 
-**nf-core/nidavellir** is a bioinformatics pipeline that ...
+**nf-core/nidavellir** is a Nextflow / nf-core workflow system for FAIR and reproducible bioimage machine learning pipelines.
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+### Current implemented capabilities (MVP)
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/guidelines/graphic_design/workflow_diagrams#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+This repository currently provides concrete data-staging/storage and inference scaffolds, plus a structured training-track stage graph with deterministic scaffold outputs for downstream integration.
+
+Default implemented steps include:
+
+1. Read a bioimage training samplesheet and stage image inputs.
+2. Convert source images to **OME-Zarr** using `bioformats2raw`.
+3. Write machine-readable training-input metadata (`fair_training_inputs.ndjson`).
+4. Track software versions for reproducibility.
+
+In addition, the `training` track now executes a six-stage scaffold DAG (dataset staging, parent-model staging, training, evaluation, publication, RO-Crate packaging) that emits stable channel contracts. Local modules for BioImage.io model handling and training RO-Crate generation are included as reusable building blocks for follow-up wiring.
+
+### Target full lifecycle architecture
+
+Nidavellir is being developed as a modular system that covers the full ML lifecycle for microscopy and medical imaging segmentation.
+
+- **Training pipeline**
+  - Stage datasets from OMERO
+  - Stage pretrained models (BioImage Model Zoo)
+  - Run cross-validation training (for example PyTorch models such as U-Net)
+  - Evaluate model performance
+  - Publish trained models
+  - Package outputs as FAIR RO-Crate artifacts with full provenance
+- **Inference pipeline**
+  - Convert images to OME-Zarr (NGFF)
+  - Run model inference
+  - Export segmentation masks and labelled images
+- **Data storage pipeline**
+  - Store images and labels in OMERO
+  - Annotate datasets with metadata
+
+The architecture supports human-in-the-loop learning workflows where corrected predictions are persisted as new training data.
+
+> [!NOTE]
+> Some lifecycle components described above are planned and may not yet be implemented in the current release.
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
-
-First, prepare a samplesheet with your input data that looks as follows:
+First, prepare a samplesheet with your input image data:
 
 `samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample,image_path,omero_id
+cell_001,/data/images/cell_001.ome.tiff,OMERO:Image:123
+cell_002,/data/images/cell_002.czi,
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
+Required columns:
+- `sample`: Unique sample identifier.
+- `image_path`: Local path to an input image file supported by Bio-Formats.
 
--->
+Optional columns:
+- `omero_id`: Upstream OMERO object identifier for provenance tracking.
 
 Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
 nextflow run nf-core/nidavellir \
@@ -68,6 +94,42 @@ nextflow run nf-core/nidavellir \
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/nidavellir/usage) and the [parameter documentation](https://nf-co.re/nidavellir/parameters).
+
+### Workflow track selection
+
+Use `--workflow_track` to select the high-level flow:
+
+- `data_storage`: data storage flow (supports `--data_storage_mode full|generate_ometiff`)
+- `generate_ometiff`: conversion-only shortcut (`bioformats2raw -> raw2ometiff`)
+- `training`: scaffold DAG track (explicit stages 1-6 with stable output contracts; placeholder logic for training/eval internals)
+- `inference`: implemented conversion/export scaffold (`bioformats2raw -> [placeholder inference] -> raw2ometiff` for mask + labelled outputs)
+
+`--pipeline_track` is retained as a backward-compatible alias. If both are set, `--workflow_track` takes precedence.
+
+### Inference pipeline (current implementation details)
+
+The `inference` track currently executes a concrete conversion + export path and a clearly marked model-inference placeholder:
+
+1. **Input staging to OME-Zarr** (`BIOFORMATS2RAW`)
+   - Converts each input image into `<sample>.ome.zarr` for analysis-friendly NGFF representation.
+2. **Model inference placeholder scaffold**
+   - Temporary pass-through that duplicates each staged OME-Zarr into two channels representing:
+     - segmentation mask export (`output_suffix: mask`)
+     - labelled image export (`output_suffix: labelled`)
+   - This is a deliberate scaffold and should be replaced by a real model runner in a follow-up update.
+3. **OME-TIFF exports** (`RAW2OMETIFF`)
+   - Produces `<sample>_mask.ome.tif` and `<sample>_labelled.ome.tif`.
+
+To run this track:
+
+```bash
+nextflow run nf-core/nidavellir \
+  --input ./samplesheet.csv \
+  --outdir ./results \
+  --workflow_track inference \
+  -profile docker
+```
+
 
 ## Pipeline output
 
