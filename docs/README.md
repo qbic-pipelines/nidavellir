@@ -2,6 +2,8 @@
 
 The nf-core/nidavellir documentation is split into the following pages:
 
+- [Architecture](architecture.md)
+  - System architecture, technology stack, workflow tracks, and implementation status.
 - [Usage](usage.md)
   - An overview of how the pipeline works, how to run it and a description of all of the different command-line flags.
 - [Output](output.md)

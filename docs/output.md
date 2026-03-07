@@ -14,6 +14,16 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and currently p
 - [FAIR metadata summary](#fair-metadata-summary) - Emit line-delimited JSON records for staged training inputs
 - [Pipeline information](#pipeline-information) - Nextflow reports and collated software versions
 
+## FAIR lifecycle mapping
+
+| Current output artifact | Produced now | Downstream FAIR/ML lifecycle role |
+| ----------------------- | ------------ | --------------------------------- |
+| `<sample>.ome.zarr/` | Yes | Standardised, analysis-ready image representation for model development and future inference tasks. |
+| `metadata/fair_training_inputs.ndjson` | Yes | Machine-readable provenance records linking sample IDs, optional OMERO IDs, staged paths, and data formats. |
+| `pipeline_info/` reports + `params.json` | Yes | Reproducibility and execution provenance (run parameters, software/report traceability). |
+| `ro-crate-metadata.json` (repository root template) | Template present | Anchor metadata for future RO-Crate packaging of workflow artifacts. |
+
+
 ### Bioimage staging
 
 <details markdown="1">
@@ -51,3 +61,12 @@ This metadata summary is intended as machine-readable input for downstream RO-Cr
 </details>
 
 [Nextflow](https://www.nextflow.io/docs/latest/tracing.html) provides rich execution and provenance reports that support reproducibility and troubleshooting.
+
+## Planned outputs (roadmap)
+
+The following artifact groups are expected as lifecycle components are added:
+
+- **Training outputs (planned)**: trained model packages, cross-validation metrics, evaluation summaries, and model publication metadata.
+- **Inference outputs (planned)**: segmentation masks, labelled image exports, and inference run manifests.
+- **Data storage outputs (planned)**: OMERO synchronisation logs, object identifiers, and dataset-level annotation metadata.
+- **RO-Crate packaging (planned)**: release-ready RO-Crate bundles that capture data/model/provenance relationships across training and inference runs.

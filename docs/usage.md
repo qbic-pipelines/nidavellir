@@ -8,6 +8,18 @@
 
 `nf-core/nidavellir` currently provides an MVP FAIR bioimage staging workflow. It validates an image-centric samplesheet, converts source images to OME-Zarr with `bioformats2raw`, and writes machine-readable metadata records for downstream provenance packaging.
 
+## Workflow model
+
+Nidavellir is developed as a multi-stage bioimage ML workflow system with three connected tracks:
+
+| Workflow track | Scope | Status in this repository |
+| -------------- | ----- | ------------------------- |
+| Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Partially implemented** (currently staging + FAIR metadata export). |
+| Inference | Convert images, run model inference, export masks/labelled outputs. | **Planned**. |
+| Data storage | Persist images/labels and metadata in OMERO. | **Planned**. |
+
+Current command-line execution in this repository runs the implemented MVP staging flow. Future releases will expose additional lifecycle components as dedicated modules/subworkflows while preserving FAIR provenance outputs.
+
 ## Samplesheet input
 
 Provide a comma-separated samplesheet with the required columns `sample,image_path` and optional `omero_id`:

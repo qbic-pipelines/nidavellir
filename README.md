@@ -20,16 +20,42 @@
 
 ## Introduction
 
-**nf-core/nidavellir** is a Nextflow / nf-core pipeline for FAIR training workflows in bioimage machine learning.
-It currently provides an initial staging workflow that standardises microscopy image inputs into **OME-Zarr** and writes structured metadata for downstream provenance and RO-Crate packaging.
-The project is being developed as a modular architecture to cover the full training lifecycle (staging, training, evaluation, FAIR packaging, inference, and human-in-the-loop feedback loops).
+**nf-core/nidavellir** is a Nextflow / nf-core workflow system for FAIR and reproducible bioimage machine learning pipelines.
 
-Default implemented steps in this repository include:
+### Current implemented capabilities (MVP)
+
+This repository currently provides an initial staging workflow that standardises microscopy image inputs into **OME-Zarr** and writes structured metadata for downstream provenance and RO-Crate packaging.
+
+Default implemented steps include:
 
 1. Read a bioimage training samplesheet and stage image inputs.
 2. Convert source images to **OME-Zarr** using `bioformats2raw`.
 3. Write machine-readable training-input metadata (`fair_training_inputs.ndjson`).
 4. Track software versions for reproducibility.
+
+### Target full lifecycle architecture
+
+Nidavellir is being developed as a modular system that covers the full ML lifecycle for microscopy and medical imaging segmentation.
+
+- **Training pipeline**
+  - Stage datasets from OMERO
+  - Stage pretrained models (BioImage Model Zoo)
+  - Run cross-validation training (for example PyTorch models such as U-Net)
+  - Evaluate model performance
+  - Publish trained models
+  - Package outputs as FAIR RO-Crate artifacts with full provenance
+- **Inference pipeline**
+  - Convert images to OME-Zarr (NGFF)
+  - Run model inference
+  - Export segmentation masks and labelled images
+- **Data storage pipeline**
+  - Store images and labels in OMERO
+  - Annotate datasets with metadata
+
+The architecture supports human-in-the-loop learning workflows where corrected predictions are persisted as new training data.
+
+> [!NOTE]
+> Some lifecycle components described above are planned and may not yet be implemented in the current release.
 
 ## Usage
 
