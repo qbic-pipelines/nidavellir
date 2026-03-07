@@ -18,7 +18,8 @@ process RAW2OMETIFF {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def output_suffix = meta.output_suffix ? "_${meta.output_suffix}" : ''
+    def prefix = task.ext.prefix ?: "${meta.id}${output_suffix}"
 
     """
     raw2ometiff \\
@@ -34,7 +35,8 @@ process RAW2OMETIFF {
     """
 
     stub:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def output_suffix = meta.output_suffix ? "_${meta.output_suffix}" : ''
+    def prefix = task.ext.prefix ?: "${meta.id}${output_suffix}"
 
     """
     touch ${prefix}.ome.tif

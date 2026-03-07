@@ -100,9 +100,33 @@ Use `--workflow_track` to select the high-level flow:
 - `data_storage`: data storage flow (supports `--data_storage_mode full|generate_ometiff`)
 - `generate_ometiff`: conversion-only shortcut (`bioformats2raw -> raw2ometiff`)
 - `training`: scaffold track (stage plan logged; implementation pending)
-- `inference`: scaffold track (stage plan logged; implementation pending)
+- `inference`: implemented conversion/export scaffold (`bioformats2raw -> [placeholder inference] -> raw2ometiff` for mask + labelled outputs)
 
 `--pipeline_track` is retained as a backward-compatible alias. If both are set, `--workflow_track` takes precedence.
+
+### Inference pipeline (current implementation details)
+
+The `inference` track currently executes a concrete conversion + export path and a clearly marked model-inference placeholder:
+
+1. **Input staging to OME-Zarr** (`BIOFORMATS2RAW`)
+   - Converts each input image into `<sample>.ome.zarr` for analysis-friendly NGFF representation.
+2. **Model inference placeholder scaffold**
+   - Temporary pass-through that duplicates each staged OME-Zarr into two channels representing:
+     - segmentation mask export (`output_suffix: mask`)
+     - labelled image export (`output_suffix: labelled`)
+   - This is a deliberate scaffold and should be replaced by a real model runner in a follow-up update.
+3. **OME-TIFF exports** (`RAW2OMETIFF`)
+   - Produces `<sample>_mask.ome.tif` and `<sample>_labelled.ome.tif`.
+
+To run this track:
+
+```bash
+nextflow run nf-core/nidavellir \
+  --input ./samplesheet.csv \
+  --outdir ./results \
+  --workflow_track inference \
+  -profile docker
+```
 
 
 ## Pipeline output

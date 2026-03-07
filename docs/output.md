@@ -12,6 +12,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and currently p
 
 - [Bioimage staging](#bioimage-staging) - Convert input images to OME-Zarr with `bioformats2raw`
 - [OME-TIFF conversion](#ome-tiff-conversion) - Convert staged OME-Zarr to OME-TIFF with `raw2ometiff`
+- [Inference export scaffold](#inference-export-scaffold) - Produce mask and labelled-image OME-TIFF exports with a placeholder inference step
 - [OMERO upload scaffold](#omero-upload-scaffold) - Emit OMERO upload manifests (or optionally perform upload)
 - [FAIR metadata summary](#fair-metadata-summary) - Emit line-delimited JSON records for staged training inputs
 - [Pipeline information](#pipeline-information) - Nextflow reports and collated software versions
@@ -50,6 +51,26 @@ Staged OME-Zarr outputs are emitted from the `BIOFORMATS2RAW` process and can be
 </details>
 
 OME-TIFF outputs are emitted from the `RAW2OMETIFF` process. They are produced in `--data_storage_mode generate_ometiff` and `--data_storage_mode full` runs.
+
+
+### Inference export scaffold
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `ometiff/`
+  - `<sample>_mask.ome.tif` exported segmentation-mask image
+  - `<sample>_labelled.ome.tif` exported labelled-image rendition
+
+</details>
+
+The inference workflow now executes the following detailed sequence:
+
+1. `BIOFORMATS2RAW`: convert each input image into `<sample>.ome.zarr`.
+2. Inference placeholder scaffold: forward staged OME-Zarr into two semantic branches (`mask` and `labelled`).
+3. `RAW2OMETIFF`: export branch outputs as `<sample>_mask.ome.tif` and `<sample>_labelled.ome.tif`.
+
+The model inference stage is intentionally a placeholder pass-through and should be replaced by the real model runner in a follow-up change.
 
 ### OMERO upload scaffold
 
@@ -94,6 +115,6 @@ This metadata summary is intended as machine-readable input for downstream RO-Cr
 The following artifact groups are expected as lifecycle components are added:
 
 - **Training outputs (planned)**: trained model packages, cross-validation metrics, evaluation summaries, and model publication metadata.
-- **Inference outputs (planned)**: segmentation masks, labelled image exports, and inference run manifests.
+- **Inference outputs (planned additions)**: production model predictions, confidence/uncertainty maps, and inference run manifests.
 - **Data storage outputs (planned)**: OMERO synchronisation logs, object identifiers, and dataset-level annotation metadata.
 - **RO-Crate packaging (planned)**: release-ready RO-Crate bundles that capture data/model/provenance relationships across training and inference runs.
