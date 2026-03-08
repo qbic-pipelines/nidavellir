@@ -20,19 +20,27 @@
 
 ## Introduction
 
-**nf-core/nidavellir** is a Nextflow / nf-core workflow for FAIR, reproducible, and extensible bioimage machine-learning workflows, with a focus on microscopy and medical-image segmentation.
+**nf-core/nidavellir** is a Nextflow / nf-core workflow for FAIR, reproducible, and extensible bioimage machine-learning workflows, with a focus on microscopy and medical-image segmentation. The project is motivated by a practical gap in many bioimage AI efforts: strong model architectures are often limited by fragmented data lifecycle practices. Nidavellir therefore treats data stewardship, provenance, and iterative model development as a single engineering problem rather than separate tasks.
 
-The pipeline is designed to support **iterative model development** rather than isolated single runs. In particular, Nidavellir targets a full **human-in-the-loop (HITL)** lifecycle: dataset staging, model pre-training or fine-tuning, inference, expert correction/curation, and reintegration of corrected annotations for the next training cycle. This lifecycle perspective aligns with established interactive-segmentation practice (for example [Mesmer](https://www.nature.com/articles/s41587-021-01094-0) and [Cellpose](https://www.nature.com/articles/s41592-022-01663-4)) while preserving nf-core standards for portability, provenance, and repeatability.
+Nidavellir is designed for **iterative human-in-the-loop (HITL) model development** instead of isolated one-off runs. Its target lifecycle spans dataset staging, model pre-training or fine-tuning, inference, expert correction/curation, and reintegration of corrected annotations into subsequent training rounds. This lifecycle perspective aligns with established interactive-segmentation practice (for example [Mesmer](https://www.nature.com/articles/s41587-021-01094-0) and [Cellpose](https://www.nature.com/articles/s41592-022-01663-4)) while preserving nf-core standards for portability, provenance, and repeatability.
 
-From a data stewardship perspective, Nidavellir follows FAIR principles ([Wilkinson *et al.* 2016](https://www.nature.com/articles/sdata201618)) and FAIR4RS recommendations for reusable research software ([Barker *et al.* 2022](https://doi.org/10.1038/s41597-022-01710-x)). Concretely, this includes support for community formats and metadata standards such as OME-NGFF / OME-Zarr ([Moore *et al.* 2021](https://doi.org/10.1038/s41592-021-01326-w)) and machine-readable provenance artifacts (for example RO-Crate, [Soiland-Reyes *et al.* 2022](https://doi.org/10.48550/arXiv.2201.07917)).
+From a stewardship and software perspective, Nidavellir follows FAIR principles ([Wilkinson *et al.* 2016](https://www.nature.com/articles/sdata201618)) together with FAIR4RS recommendations ([Barker *et al.* 2022](https://doi.org/10.1038/s41597-022-01710-x)). Concretely, this includes interoperable community formats and metadata standards such as OME-NGFF / OME-Zarr ([Moore *et al.* 2021](https://doi.org/10.1038/s41592-021-01326-w)) plus machine-readable provenance artifacts (for example RO-Crate, [Soiland-Reyes *et al.* 2022](https://doi.org/10.48550/arXiv.2201.07917)).
 
-Nidavellir is also designed to operate with **OMERO servers** as institutional and collaborative data repositories. The intended lifecycle includes staging datasets from OMERO, tracking OMERO object identifiers during processing, and pushing curated bioimage outputs (images, labels, annotations, and derived artifacts) back into OMERO for iterative model improvement and governance. This aligns the workflow with the OMERO platform's role in scalable bioimage data management and sharing ([Allan *et al.* 2012](https://www.nature.com/articles/nmeth.1896), [Li *et al.* 2016](https://www.nature.com/articles/nmeth.3789), [Burel *et al.* 2015](https://doi.org/10.3389/fninf.2015.00047)).
+For bioimage machine learning, these practices are foundational for **AI-readiness**: robust model development depends on discoverable, consistently structured, and provenance-rich datasets that can be reused across pre-training, fine-tuning, benchmarking, and external validation. Recent high-impact biomedical AI work reinforces this point by highlighting that generalist/foundation medical AI requires large, curated, interoperable data ecosystems with explicit governance ([Moor *et al.* 2023](https://doi.org/10.1038/s41586-023-05881-4)).
 
-At the modeling level, the intended workflow supports modern training regimes spanning:
+Nidavellir is also designed to operate with **OMERO servers** as institutional and collaborative repositories, including staging datasets from OMERO, tracking OMERO object identifiers during processing, and writing curated outputs (images, labels, annotations, and derived artifacts) back for iterative improvement and governance. This use of OMERO/IDR-compatible practices aligns with both established scalable bioimage data-management literature and the federated system-architecture direction promoted by European bioimage infrastructures (Euro-BioImaging / ELIXIR), where interoperable services are coordinated across acquisition, analysis, and archive layers ([Allan *et al.* 2012](https://www.nature.com/articles/nmeth.1896), [Li *et al.* 2016](https://www.nature.com/articles/nmeth.3789), [Burel *et al.* 2015](https://doi.org/10.3389/fninf.2015.00047), [Euro-BioImaging Bio-Hub](https://www.eurobioimaging.eu/), [ELIXIR Imaging Community](https://elixir-europe.org/communities/imaging)).
 
-- **Self-supervised or weakly supervised pre-training** (for representation learning under limited labels; e.g. [Taleb *et al.* 2020](https://arxiv.org/abs/2006.06650), [Azizi *et al.* 2021](https://openaccess.thecvf.com/content/ICCV2021/html/Azizi_Big_Self-Supervised_Models_Advance_Medical_Image_Classification_ICCV_2021_paper.html));
-- **Task-specific supervised fine-tuning** on curated labels (e.g. U-Net-style segmentation, [Ronneberger *et al.* 2015](https://arxiv.org/abs/1505.04597));
-- **Active expert-in-the-loop refinement cycles**, where model outputs are corrected and recycled into subsequent training rounds (as demonstrated in practical tools such as Mesmer and Cellpose).
+### Scientific and FAIR-oriented infrastructure for scalable bioimage analysis
+
+Nidavellir is intentionally positioned at the intersection of reproducible workflows, data interoperability, and computational pathology / bioimage AI lifecycle management:
+
+- **Scalable parallel execution:** Nextflow enables process-level parallelization and robust scheduling across HPC, cloud, and containerized environments, supporting high-throughput conversion, training, and inference workloads.
+- **Data structures designed for scale:** OME-Zarr / NGFF storage supports chunked, multiscale data access patterns that are well suited for distributed and parallel bioimage processing pipelines.
+- **FAIR-by-construction outputs:** standardized formats, explicit metadata capture, software version pinning, and RO-Crate-oriented packaging facilitate downstream reuse and auditability.
+- **Model lifecycle traceability:** staged inputs, parent-model provenance, and evaluation/publication scaffolds support auditable progression from pre-training through deployment-ready checkpoints.
+- **HITL scientific practice:** expert feedback is treated as first-class training signal, enabling continuous performance improvement under domain shift and label scarcity.
+
+In practical terms, this architecture is suitable for teams implementing foundation-model adaptation pipelines for bioimaging, where self-supervised pre-training can be combined with supervised fine-tuning and iterative expert curation to improve generalization and robustness in real laboratory settings.
 
 ### Current implemented capabilities (MVP)
 
@@ -132,23 +140,6 @@ flowchart TD
 
 > [!NOTE]
 > Some lifecycle components described above are planned and may not yet be implemented in the current release.
-
-### Scientific and FAIR orientation
-
-Nidavellir is intentionally positioned at the intersection of reproducible workflows, data interoperability, and computational pathology / bioimage AI lifecycle management:
-
-- **Reproducibility and portability:** nf-core and Nextflow enable standardized execution across HPC, cloud, and container runtimes.
-- **FAIR-by-construction outputs:** standardized file formats, explicit metadata capture, software version pinning, and RO-Crate-oriented packaging facilitate downstream reuse.
-- **Model lifecycle traceability:** staged inputs, parent-model provenance, and evaluation/publication scaffolds support auditable progression from pre-training through deployment-ready checkpoints.
-- **HITL scientific practice:** expert feedback is treated as first-class training signal, enabling continuous performance improvement under domain shift and label scarcity.
-
-In practical terms, this architecture is suitable for teams implementing foundation-model adaptation pipelines for bioimaging, where self-supervised pre-training can be combined with supervised fine-tuning and iterative expert curation to improve generalization and robustness in real laboratory settings.
-
-### OMERO scientific references
-
-- Allan C, Burel J-M, Moore J, et al. OMERO: flexible, model-driven data management for experimental biology. *Nature Methods* (2012). https://www.nature.com/articles/nmeth.1896
-- Li S, Burel J-M, Cousins S, et al. IDR: an open platform for image data integration and publication. *Nature Methods* (2016). https://www.nature.com/articles/nmeth.3789
-- Burel J-M, Allen C, Williams E, et al. Publishing and Sharing Multi-Dimensional Image Data with OMERO. *Frontiers in Neuroinformatics* (2015). https://doi.org/10.3389/fninf.2015.00047
 
 ## Usage
 
@@ -306,6 +297,10 @@ For conceptual and methodological context, the following references are particul
 - Barker M, Chue Hong NP, Katz DS, *et al.* Introducing the FAIR Principles for research software. _Sci Data_ 2022. doi: [10.1038/s41597-022-01710-x](https://doi.org/10.1038/s41597-022-01710-x).
 - Moore J, Allan C, Besson S, *et al.* OME-NGFF: a next-generation file format for expanding bioimaging data-access strategies. _Nat Methods_ 2021. doi: [10.1038/s41592-021-01326-w](https://doi.org/10.1038/s41592-021-01326-w).
 - Soiland-Reyes S, Sefton P, Crosas M, *et al.* Packaging research artefacts with RO-Crate. 2022. doi: [10.48550/arXiv.2201.07917](https://doi.org/10.48550/arXiv.2201.07917).
+- Allan C, Burel J-M, Moore J, *et al.* OMERO: flexible, model-driven data management for experimental biology. _Nat Methods_ 2012. doi: [10.1038/nmeth.1896](https://doi.org/10.1038/nmeth.1896).
+- Li S, Burel J-M, Cousins S, *et al.* IDR: an open platform for image data integration and publication. _Nat Methods_ 2016. doi: [10.1038/nmeth.3789](https://doi.org/10.1038/nmeth.3789).
+- Burel J-M, Allen C, Williams E, *et al.* Publishing and Sharing Multi-Dimensional Image Data with OMERO. _Front Neuroinform_ 2015. doi: [10.3389/fninf.2015.00047](https://doi.org/10.3389/fninf.2015.00047).
+- Moor M, Banerjee O, Abad ZS, *et al.* Foundation models for generalist medical artificial intelligence. _Nature_ 2023. doi: [10.1038/s41586-023-05881-4](https://doi.org/10.1038/s41586-023-05881-4).
 - Greenwald NF, Miller G, Moen E, *et al.* Whole-cell segmentation of tissue images with human-level performance using large-scale data annotation and deep learning. _Nat Biotechnol._ 2021 (Mesmer). doi: [10.1038/s41587-021-01094-0](https://doi.org/10.1038/s41587-021-01094-0).
 - Pachitariu M, Stringer C. Cellpose 2.0: how to train your own model. _Nat Methods_ 2022. doi: [10.1038/s41592-022-01663-4](https://doi.org/10.1038/s41592-022-01663-4).
 - Taleb A, Lippert C, Klein T, Nabi M. Multimodal self-supervised learning for medical image analysis. 2020. arXiv: [2006.06650](https://arxiv.org/abs/2006.06650).
