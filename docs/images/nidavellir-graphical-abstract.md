@@ -1,5 +1,29 @@
 # Graphical abstract
 
+## Storage-step ordering update
+
+Subworkflow 3 now shows OME conversion, then structure curated images and metadata
+files in BioImage Archive format, then push and annotate with OMERO-Bifrost.
+The repository return connector leaves the final push step. Other workflows and
+connections are unchanged. This remains a target-architecture illustration.
+
+Built-in image-generation edit prompt:
+
+```text
+Edit ONLY subworkflow "3 Data storage" in the top right of this image. Preserve ALL other content, positions, style, logos, arrows, and labels exactly.
+The THREE green stations must now read LEFT TO RIGHT:
+1. "OME conversion" (unchanged).
+2. "Structure curated images + metadata files (BioImage Archive format)" — use exactly these words, wrapped into readable lines below the MIDDLE station, for example:
+"Structure curated images"
+"+ metadata files"
+"(BioImage Archive format)"
+3. "Push + annotate" with sublabel "(OMERO-Bifrost)" — this is now the LAST, rightmost station.
+Remove old middle label Push + annotate and old final label Curated images + metadata; do not duplicate them.
+Move the SOURCE of the green return connector to the LAST/rightmost Push + annotate station (x1555 in reference), routed down just outside bottom of its gray lane then left to the same existing destination Data repositories. Preserve the return arrow label "Curated images + labels" and arrowhead at Data repositories. This output must originate from the final push step, not the newly renamed middle structure step.
+If needed increase height of ONLY storage lane slightly to fit the 3-line middle label, and route return path beneath it without touching text. Keep expert review entering the start of storage, and retain all other seven cross-panel connections and every training/inference element exactly unchanged.
+Maintain minimalist flat nf-core metro styling and black typography. No extra icons. Exact spelling BioImage Archive and OMERO-Bifrost.
+```
+
 ## Simplified nf-core-style redesign
 
 The current image uses flat metro-style workflow lines, inspired by the
