@@ -1,0 +1,29 @@
+name: "bioimageio_publish_model"
+description: Publish/register a trained model package to BioImage.io and emit a deterministic publication record.
+keywords:
+  - bioimageio
+  - model-zoo
+  - publish
+tools:
+  - "bioimageio-spec":
+      description: "BioImage.io Python tooling used to publish or register model artifacts."
+      homepage: "https://github.com/bioimage-io/spec-bioimage-io"
+input:
+  - - meta:
+        type: map
+        description: Sample metadata map
+    - trained_model_metadata:
+        type: file
+        description: JSON metadata describing the trained model package to publish
+output:
+  - publication:
+    - meta:
+        type: map
+        description: Sample metadata map
+    - "*_bioimageio_publication.json":
+        type: file
+        description: Deterministic JSON publication result
+  - versions:
+    - "versions.yml":
+        type: file
+        description: Software versions file

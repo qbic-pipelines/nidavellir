@@ -16,6 +16,8 @@
 */
 
 include { NIDAVELLIR  } from './workflows/nidavellir'
+include { TRAINING_PIPELINE } from './workflows/training'
+include { INFERENCE_PIPELINE } from './workflows/inference'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_nidavellir_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_nidavellir_pipeline'
 /*
@@ -33,15 +35,37 @@ workflow NFCORE_NIDAVELLIR {
     samplesheet // channel: samplesheet read in from --input
 
     main:
+    ch_multiqc_report = Channel.empty()
+    def selected_workflow = params.workflow_track ?: params.pipeline_track
 
-    //
-    // WORKFLOW: Run pipeline
-    //
-    NIDAVELLIR (
-        samplesheet
-    )
+    if (selected_workflow == 'data_storage') {
+        NIDAVELLIR (
+            samplesheet,
+            params.data_storage_mode
+        )
+        ch_multiqc_report = NIDAVELLIR.out.multiqc_report
+    } else if (selected_workflow == 'generate_ometiff') {
+        NIDAVELLIR (
+            samplesheet,
+            'generate_ometiff'
+        )
+        ch_multiqc_report = NIDAVELLIR.out.multiqc_report
+    } else if (selected_workflow == 'training') {
+        TRAINING_PIPELINE (
+            samplesheet
+        )
+        ch_multiqc_report = TRAINING_PIPELINE.out.multiqc_report
+    } else if (selected_workflow == 'inference') {
+        INFERENCE_PIPELINE (
+            samplesheet
+        )
+        ch_multiqc_report = INFERENCE_PIPELINE.out.multiqc_report
+    } else {
+        error "Unsupported workflow '${selected_workflow}'. Choose one of: training, inference, data_storage, generate_ometiff"
+    }
+
     emit:
-    multiqc_report = NIDAVELLIR.out.multiqc_report // channel: /path/to/multiqc_report.html
+    multiqc_report = ch_multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

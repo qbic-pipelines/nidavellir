@@ -3,14 +3,9 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { MULTIQC                } from '../modules/nf-core/multiqc/main'
-include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_nidavellir_pipeline'
-include { BIOFORMATS2RAW         } from '../modules/nf-core/bioformats2raw/main'
-
-
+include { GENERATE_OMETIFF       } from '../subworkflows/local/generate_ometiff/main'
+include { DATA_STORAGE_OMERO     } from '../subworkflows/local/data_storage_omero/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -21,34 +16,69 @@ include { BIOFORMATS2RAW         } from '../modules/nf-core/bioformats2raw/main'
 workflow NIDAVELLIR {
 
     take:
-    ch_samplesheet // channel: samplesheet read in from --input
+    ch_samplesheet // channel: tuple val(meta), path(image) read in from --input
+    mode           // string: data storage execution mode
+
     main:
-
     ch_versions = Channel.empty()
+    ch_multiqc_report = Channel.empty()
+    ch_staged_omezarr = Channel.empty()
+    ch_staged_ometiff = Channel.empty()
+    ch_omero_upload_manifest = Channel.empty()
 
+    def effective_data_storage_mode = mode ?: params.data_storage_mode
 
-    
+    if (effective_data_storage_mode == 'generate_ometiff') {
+        GENERATE_OMETIFF(ch_samplesheet)
+        ch_versions = ch_versions.mix(GENERATE_OMETIFF.out.versions)
+        ch_staged_omezarr = GENERATE_OMETIFF.out.staged_omezarr
+        ch_staged_ometiff = GENERATE_OMETIFF.out.staged_ometiff
+    } else if (effective_data_storage_mode == 'full') {
+        DATA_STORAGE_OMERO(ch_samplesheet)
+        ch_versions = ch_versions.mix(DATA_STORAGE_OMERO.out.versions)
+        ch_staged_omezarr = DATA_STORAGE_OMERO.out.staged_omezarr
+        ch_staged_ometiff = DATA_STORAGE_OMERO.out.staged_ometiff
+        ch_omero_upload_manifest = DATA_STORAGE_OMERO.out.omero_upload_manifest
+    } else {
+        error "Unsupported --data_storage_mode '${effective_data_storage_mode}'. Choose one of: generate_ometiff, full"
+    }
 
-    BIOFORMATS2RAW (ch_samplesheet)
+    // FAIR output packaging (MVP: line-delimited JSON summary for downstream RO-Crate generation)
+    ch_staged_omezarr
+        .map { meta, omezarr ->
+            def record = [
+                sample: meta.id,
+                omero_id: meta.omero_id ?: null,
+                staged_dataset: omezarr.toString(),
+                data_format: 'OME-Zarr'
+            ]
+            return groovy.json.JsonOutput.toJson(record)
+        }
+        .collectFile(
+            storeDir: "${params.outdir}/metadata",
+            name: 'fair_training_inputs.ndjson',
+            newLine: true,
+            sort: true
+        )
+        .set { ch_fair_training_inputs }
 
-    //
     // Collate and save software versions
-    //
     softwareVersionsToYAML(ch_versions)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name: 'nf_core_'  +  'nidavellir_software_'  + 'mqc_'  + 'versions.yml',
+            name: 'nf_core_nidavellir_mqc_versions.yml',
             sort: true,
             newLine: true
-        ).set { ch_collated_versions }
-
-
-
+        )
+        .set { ch_collated_versions }
 
     emit:
-    //multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
-
+    staged_omezarr        = ch_staged_omezarr         // channel: tuple val(meta), path("*.ome.zarr")
+    staged_ometiff        = ch_staged_ometiff         // channel: tuple val(meta), path("*.ome.tif")
+    omero_upload_manifest = ch_omero_upload_manifest  // channel: tuple val(meta), path("*_omero_upload.json")
+    fair_training_inputs  = ch_fair_training_inputs   // channel: path("fair_training_inputs.ndjson")
+    multiqc_report        = ch_multiqc_report         // channel: empty placeholder for pipeline completion hooks
+    versions              = ch_versions               // channel: [ path(versions.yml) ]
 }
 
 /*
