@@ -1,10 +1,12 @@
-# nf-core/nidavellir: Output
+# Nidavellir: Output
 
 ## Introduction
 
 This document describes outputs currently produced by implemented data storage/conversion paths, inference exports, and scaffolded training-track contracts.
 
-The directories listed below are created in the results directory after pipeline completion. All paths are relative to the top-level results directory.
+File outputs depend on the selected track. Training-stage values below are
+in-memory contracts, not necessarily files. Published paths are relative to the
+results directory unless stated otherwise.
 
 ## Pipeline overview
 
@@ -20,26 +22,27 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and currently p
 
 ## FAIR lifecycle mapping
 
-| Current output artifact | Produced now | Downstream FAIR/ML lifecycle role |
-| ----------------------- | ------------ | --------------------------------- |
-| `<sample>.ome.zarr/` | Yes | Standardised, analysis-ready image representation for model development and future inference tasks. |
-| `metadata/fair_training_inputs.ndjson` | Yes | Machine-readable provenance records linking sample IDs, optional OMERO IDs, staged paths, and data formats. |
-| `ometiff/` | Conditional | Converted OME-TIFF files created by `raw2ometiff`. |
-| `omero/` | Conditional | JSON upload manifests (or live upload traces) for OMERO synchronisation and metadata annotation. |
-| `pipeline_info/` reports + `params.json` | Yes | Reproducibility and execution provenance (run parameters, software/report traceability). |
-| `ro-crate-metadata.json` (repository root template) | Template present | Anchor metadata for future RO-Crate packaging of workflow artifacts. |
-
+| Current output artifact                             | Produced now                            | Downstream FAIR/ML lifecycle role                                                                               |
+| --------------------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `bioformats2raw/<sample>.ome.zarr/`                 | Conversion/storage and inference tracks | Standardised image representation; suitability for analysis depends on the downstream reader and preprocessing. |
+| `metadata/fair_training_inputs.ndjson`              | Conversion/storage tracks               | Machine-readable provenance records linking sample IDs, optional OMERO IDs, staged paths, and data formats.     |
+| `ometiff/`                                          | Conditional                             | Converted OME-TIFF files created by `raw2ometiff`.                                                              |
+| `omero/`                                            | Conditional                             | JSON upload manifests (or live upload traces) for OMERO upload and metadata annotation.                         |
+| `pipeline_info/` reports + `params.json`            | Yes                                     | Reproducibility and execution provenance (run parameters, software/report traceability).                        |
+| `ro-crate-metadata.json` (repository root template) | Template present                        | Anchor metadata for future RO-Crate packaging of workflow artifacts.                                            |
 
 ### Bioimage staging
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `<sample>.ome.zarr/` directories generated from input images
+- `bioformats2raw/<sample>.ome.zarr/` directories generated from input images
 
 </details>
 
-Staged OME-Zarr outputs are emitted from the `BIOFORMATS2RAW` process and can be used downstream for model training and inference workflows.
+Staged OME-Zarr outputs are emitted from the `BIOFORMATS2RAW` process. Consumers
+must support that representation; the current NuxNet/Nidavellir Tools dataset
+reader needs paired OME-TIFF images and annotations, not these stores directly.
 
 ### OME-TIFF conversion
 
@@ -53,15 +56,14 @@ Staged OME-Zarr outputs are emitted from the `BIOFORMATS2RAW` process and can be
 
 OME-TIFF outputs are emitted from the `RAW2OMETIFF` process. They are produced in `--data_storage_mode generate_ometiff` and `--data_storage_mode full` runs.
 
-
 ### Inference export scaffold
 
 <details markdown="1">
 <summary>Output files</summary>
 
 - `ometiff/`
-  - `<sample>_mask.ome.tif` exported segmentation-mask image
-  - `<sample>_labelled.ome.tif` exported labelled-image rendition
+  - `<sample>_mask.ome.tif` pass-through image with a placeholder mask suffix
+  - `<sample>_labelled.ome.tif` pass-through image with a placeholder labelled suffix
 
 </details>
 
@@ -97,7 +99,6 @@ OMERO manifest outputs are produced in `--data_storage_mode full`. Live upload b
 
 This metadata summary is intended as machine-readable input for downstream RO-Crate and provenance packaging steps.
 
-
 ### Training scaffold outputs
 
 The `--workflow_track training` path is now structurally wired as a six-stage DAG with deterministic contracts between stages:
@@ -106,12 +107,14 @@ The `--workflow_track training` path is now structurally wired as a six-stage DA
 2. Stage parent model from BioImage Model Zoo (structured artifact descriptor).
 3. Cross-validation training scaffold (trained-model placeholder artifact contract).
 4. Evaluation scaffold (metrics summary contract).
-5. Publication scaffold (BioImage.io publication-record contract).
+5. Publication scaffold (BioImage.IO publication-record contract).
 6. RO-Crate packaging scaffold (RO-Crate artifact path contract).
 
-In this repository revision, these outputs are primarily scaffold metadata contracts. Reusable local modules also exist for:
+In this repository revision, these are in-memory placeholder metadata contracts.
+The training workflow does not write trained weights, evaluation results, a live
+publication, or the ZIP named by its RO-Crate path string. Reusable local modules also exist for:
 
-- BioImage.io parent-model staging and publication-record generation.
+- BioImage.IO parent-model staging and publication-record generation.
 - RO-Crate artifact construction with OMERO dataset/tag/server references, parent-model linkage, training hyperparameters, and publication identifiers.
 
 ### Pipeline information
@@ -121,7 +124,7 @@ In this repository revision, these outputs are primarily scaffold metadata contr
 
 - `pipeline_info/`
   - Nextflow execution reports such as `execution_report_<timestamp>.html`, `execution_timeline_<timestamp>.html`, `execution_trace_<timestamp>.txt`, and `pipeline_dag_<timestamp>.html`.
-  - Collated software versions: `nf_core_nidavellir_mqc_versions.yml`.
+  - Collated software versions: `nf_core_nidavellir_mqc_versions.yml` (conversion/storage tracks).
   - Run parameters snapshot: `params_<timestamp>.json`.
 
 </details>

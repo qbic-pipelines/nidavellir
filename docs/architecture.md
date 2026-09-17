@@ -1,27 +1,27 @@
-# nf-core/nidavellir: Architecture
+# Nidavellir: Architecture
 
 ## System overview
 
 Nidavellir is a Nextflow / nf-core based workflow system for FAIR and reproducible bioimage machine learning pipelines. The long-term architecture is split into three connected workflow tracks:
 
-1. **Training pipeline**
-2. **Inference pipeline**
+1. **Inference pipeline**
+2. **Training and transfer-learning pipeline**
 3. **Data storage pipeline**
 
 Each track is designed to exchange machine-readable outputs (for example OME-Zarr data, model/publication descriptors, and RO-Crate metadata) to support provenance tracking and iterative model improvement.
 
 ## Technology stack
 
-| Technology | Role in Nidavellir |
-| ---------- | ------------------ |
-| Nextflow | Workflow orchestration and scalable execution on local/HPC/cloud platforms. |
-| nf-core | Pipeline standards, community conventions, schema-driven parameters, and reusable modules. |
-| OMERO | Image and annotation management for staging training data and writing curated labels/metadata back to storage. |
+| Technology                                                                    | Role in Nidavellir                                                                                                                    |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Nextflow                                                                      | Workflow orchestration and scalable execution on local/HPC/cloud platforms.                                                           |
+| nf-core                                                                       | Pipeline standards, community conventions, schema-driven parameters, and reusable modules.                                            |
+| OMERO                                                                         | Image and annotation management for staging training data and writing curated labels/metadata back to storage.                        |
 | [OMERO Bifrost](https://github.com/luiskuhn/omero-bifrost/tree/forward-cycle) | Nidavellir companion providing Nextflow-ready query/push/pull operations for single OMERO servers and federated OMERO constellations. |
-| OME-Zarr (NGFF) | Cloud- and analysis-friendly image format for staged training/inference inputs and downstream interoperability. |
-| PyTorch | Deep-learning framework for model training and evaluation (for example segmentation models such as U-Net). |
-| BioImage Model Zoo | Source for pretrained models and destination for publishing validated model artifacts. |
-| RO-Crate | FAIR packaging layer for data/model/provenance outputs with machine-readable metadata. |
+| OME-Zarr (NGFF)                                                               | Cloud- and analysis-friendly image format for staged training/inference inputs and downstream interoperability.                       |
+| PyTorch                                                                       | Deep-learning framework for model training and evaluation (for example segmentation models such as U-Net).                            |
+| BioImage Model Zoo                                                            | Source for pretrained models and destination for publishing validated model artifacts.                                                |
+| RO-Crate                                                                      | FAIR packaging layer for data/model/provenance outputs with machine-readable metadata.                                                |
 
 ## Workflow tracks
 
@@ -58,12 +58,14 @@ and [Nextflow integration guide](https://github.com/luiskuhn/omero-bifrost/blob/
 
 Intended capabilities:
 
-- Stage datasets from OMERO.
-- Stage pretrained models from BioImage Model Zoo.
-- Run cross-validation training (for example PyTorch segmentation models).
-- Evaluate model performance.
-- Publish trained models.
-- Package results as FAIR RO-Crate artifacts with full provenance.
+- Stage datasets and an optional compatible parent model.
+- Train/fine-tune with the selected use-case application and evaluate held-out performance.
+- Build and validate a BioImage.IO child model package with Nidavellir Tools.
+- Optionally publish to a model repository and reuse the package as the next parent.
+- Collect workflow-level provenance in a separate RO-Crate.
+
+This is the target sequence in the graphical abstract, not the current six-stage
+placeholder implementation. See the [README](../README.md#target-full-lifecycle-architecture).
 
 ### Inference pipeline
 
@@ -71,19 +73,27 @@ Current capabilities (partial implementation):
 
 - Convert input images to OME-Zarr (NGFF) using `bioformats2raw`.
 - Execute a **placeholder scaffold** for model inference (explicit pass-through hook).
-- Export segmentation masks and labelled images to OME-TIFF using `raw2ometiff`.
+- Export pass-through images to OME-TIFF using `raw2ometiff`; the mask/labelled
+  filenames are placeholders, not actual segmentations or scientific predictions.
 
 Design notes:
 
-- The placeholder is intentionally isolated between conversion and export so a real inference engine can be dropped in without changing upstream/downstream data contracts.
+- The placeholder isolates the intended inference boundary. A real runner must
+  still implement compatible input/output contracts and any required format adapters.
 - Export branches use suffix-aware naming (`_mask`, `_labelled`) to keep artefacts distinct per sample.
 
 ### Data storage pipeline
 
 Intended capabilities:
 
-- Store images and labels in OMERO.
-- Annotate datasets with metadata.
+1. Convert images to the required OME representation.
+2. Structure curated images and metadata files in the supported BioImage Archive-style layout.
+3. Push and annotate in selected OMERO servers through OMERO-Bifrost.
+
+The middle stage is planned dataset/metadata preparation, not a general Archive
+submission validator or uploader. Bifrost's final step targets OMERO; BioImage
+Archive is a separate source/destination. Current code implements conversion and
+a direct-OMERO-CLI upload manifest path, not this complete target sequence.
 
 ## Human-in-the-loop learning
 

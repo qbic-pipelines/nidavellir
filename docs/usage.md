@@ -1,22 +1,21 @@
-# nf-core/nidavellir: Usage
+# Nidavellir: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/nidavellir/usage](https://nf-co.re/nidavellir/usage)
-
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
+See the [parameter schema](../nextflow_schema.json) for declared options and the
+[README](../README.md) for the target architecture and implementation boundaries.
 
 ## Introduction
 
-`nf-core/nidavellir` currently provides an MVP FAIR bioimage staging workflow. It validates an image-centric samplesheet, converts source images to OME-Zarr with `bioformats2raw`, and writes machine-readable metadata records for downstream provenance packaging.
+`luiskuhn/nidavellir` currently provides an MVP FAIR bioimage staging workflow. It validates an image-centric samplesheet, converts source images to OME-Zarr with `bioformats2raw`, and writes machine-readable metadata records for downstream provenance packaging.
 
 ## Workflow model
 
 Nidavellir is developed as a multi-stage bioimage ML workflow system with three connected tracks:
 
-| Workflow track | Scope | Status in this repository |
-| -------------- | ----- | ------------------------- |
-| Training | Stage data/models, run training and evaluation, package FAIR outputs. | **Scaffolded + structurally wired** (explicit six-stage DAG with stable output contracts and placeholder stage internals). |
-| Inference | Convert images, run model inference, export masks/labelled outputs. | **Partially implemented** (conversion + exports implemented; model inference step is a placeholder scaffold). |
-| Data storage | Persist images/labels and metadata in OMERO. | **Partially implemented** (`generate_ometiff` conversion path + OMERO upload manifest scaffold; optional live upload). |
+| Workflow track | Scope                                                                 | Status in this repository                                                                                                  |
+| -------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Training       | Stage data/models, run training and evaluation, package FAIR outputs. | **Scaffolded + structurally wired** (explicit six-stage DAG with stable output contracts and placeholder stage internals). |
+| Inference      | Convert images, run model inference, export masks/labelled outputs.   | **Partially implemented** (conversion + exports implemented; model inference step is a placeholder scaffold).              |
+| Data storage   | Persist images/labels and metadata in OMERO.                          | **Partially implemented** (`generate_ometiff` conversion path + OMERO upload manifest scaffold; optional live upload).     |
 
 Current command-line execution supports implemented data staging/storage workflows and a partially implemented inference track (with explicit placeholder for the model execution step). Future releases will expose remaining lifecycle components as dedicated modules/subworkflows while preserving FAIR provenance outputs.
 
@@ -30,10 +29,10 @@ Provide a comma-separated samplesheet with the required columns `sample,image_pa
 
 ### Required / optional columns
 
-| Column       | Required | Description |
-| ------------ | -------- | ----------- |
-| `sample`     | Yes      | Unique sample identifier. Spaces are not allowed. |
-| `image_path` | Yes      | Absolute or relative path to a Bio-Formats compatible image file to stage. |
+| Column       | Required | Description                                                                        |
+| ------------ | -------- | ---------------------------------------------------------------------------------- |
+| `sample`     | Yes      | Unique sample identifier. Spaces are not allowed.                                  |
+| `image_path` | Yes      | Absolute or relative path to a Bio-Formats compatible image file to stage.         |
 | `omero_id`   | No       | Upstream OMERO identifier (for example `OMERO:Image:123`) recorded for provenance. |
 
 Example:
@@ -46,19 +45,23 @@ cell_002,/data/images/cell_002.czi,
 
 An [example samplesheet](../assets/samplesheet.csv) is included in this repository.
 
-
 ### OMERO data storage scaffold
 
 The data storage pipeline now runs as reusable subworkflows: `generate_ometiff` (which chains `bioformats2raw -> raw2ometiff`) followed by `omero_upload_ometiff`.
 
-By default, uploads run in dry-run mode and only emit JSON manifests. To perform a live upload, set:
+By default, uploads run in dry-run mode and only emit JSON manifests. The current
+live-upload scaffold uses `omero_dry_run: false`, `omero_host`, `omero_user`, and
+`omero_password` parameters.
 
-```bash
---omero_dry_run false --omero_host <host> --omero_user <user> --omero_password <password>
-```
+> [!WARNING]
+> This legacy module interpolates the password into a task script; ordinary
+> parameter reporting may also retain it. A params file alone does not make this
+> secret-safe. Keep dry-run enabled for shared/published runs until secure
+> credential handling is integrated. Do not commit credentials or publish work
+> directories or parameter reports containing them. Bifrost profile integration
+> remains planned and does not fix this existing module automatically.
 
 Optional: `--omero_project`, `--omero_dataset`, `--omero_metadata_ns`.
-
 
 ### Selecting workflow type and data storage mode
 
@@ -79,7 +82,7 @@ For `--workflow_track data_storage`, use `--data_storage_mode` to choose:
 Example (conversion only):
 
 ```bash
-nextflow run nf-core/nidavellir \
+nextflow run luiskuhn/nidavellir -r dev \
   --input ./samplesheet.csv \
   --outdir ./results \
   --workflow_track generate_ometiff \
@@ -88,7 +91,7 @@ nextflow run nf-core/nidavellir \
 
 ### Training scaffold parameters (stages 1-6)
 
-The training track now executes an explicit six-stage scaffold DAG and emits stable stage contracts. Current logic is still placeholder-oriented for OMERO querying, model training, evaluation, and live publication calls, but stage boundaries and output schemas are in place for incremental hardening. The parameter groups below capture planning/provenance metadata and support reproducible future runs as modules are fully wired.
+The training track now executes an explicit six-stage scaffold DAG and emits stable stage contracts. Current logic is still placeholder-oriented for OMERO querying, model training, evaluation, and live publication calls, but stage boundaries and output schemas are in place for incremental hardening. The parameter groups below are declared planning placeholders. The current workflow does not consume most of them or persist them as stage outputs; do not interpret their presence in the schema as implemented behavior. In particular, current stage logic reads `parent_model_id` and `cv_folds`, not the similarly named `training_stage*` options.
 
 1. **Stage (1) OMERO query scaffold inputs**
    - `--training_stage1_omero_tags`
@@ -113,16 +116,13 @@ The training track now executes an explicit six-stage scaffold DAG and emits sta
    - `--training_stage6_rocrate_license`
    - `--training_stage6_rocrate_run_title`
 
-Example (training scaffold metadata run):
+Example (training scaffold only; no model training or publication):
 
 ```bash
-nextflow run nf-core/nidavellir \
+nextflow run luiskuhn/nidavellir -r dev \
   --input ./samplesheet.csv \
   --outdir ./results \
   --workflow_track training \
-  --training_stage34_fold_count 5 \
-  --training_stage34_seed 42 \
-  --training_stage2_parent_model_id 10.5281/zenodo.1234567 \
   -profile docker
 ```
 
@@ -136,12 +136,12 @@ The `--workflow_track inference` path currently implements:
    - `<sample>_mask.ome.tif`
    - `<sample>_labelled.ome.tif`
 
-The placeholder in step (2) is intentional and marks where a future dedicated model inference module/subworkflow should be inserted.
+The placeholder in step (2) passes through source pixels: neither exported file is an actual segmentation. No uncertainty estimation or model execution occurs in this track yet.
 
 Example (inference scaffold run):
 
 ```bash
-nextflow run nf-core/nidavellir \
+nextflow run luiskuhn/nidavellir -r dev \
   --input ./samplesheet.csv \
   --outdir ./results \
   --workflow_track inference \
@@ -153,7 +153,7 @@ nextflow run nf-core/nidavellir \
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/nidavellir --input ./samplesheet.csv --outdir ./results -profile docker
+nextflow run luiskuhn/nidavellir -r dev --input ./samplesheet.csv --outdir ./results --workflow_track generate_ometiff -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -163,7 +163,7 @@ Note that the pipeline will create the following files in your working directory
 ```bash
 work                # Directory containing the Nextflow working files
 <OUTDIR>            # Finished results in specified location (defined with --outdir)
-.nextflow_log       # Log file from Nextflow
+.nextflow.log       # Log file from Nextflow
 # Other Nextflow hidden files, e.g. run history and old logs.
 ```
 
@@ -172,35 +172,35 @@ If you wish to repeatedly use the same parameters for multiple runs, rather than
 Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <file>`.
 
 > [!WARNING]
-> Do not use `-c <file>` to specify parameters as this will result in errors. Custom config files specified with `-c` must only be used for [tuning process resource specifications](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources), other infrastructural tweaks (such as output directories), or module arguments (args).
+> Prefer `-params-file` for pipeline parameters, including `outdir`. Reserve `-c` for [process resources](https://nf-co.re/docs/usage/configuration#tuning-workflow-resources), infrastructure, and module arguments. The existing `raw2ometiff.config` preset has a legacy parameter fallback; see the README for its supported override pattern.
 
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run nf-core/nidavellir -profile docker -params-file params.yaml
+nextflow run luiskuhn/nidavellir -r dev -profile docker -params-file params.yaml
 ```
 
 with:
 
 ```yaml title="params.yaml"
-input: './samplesheet.csv'
-outdir: './results/'
-<...>
+input: "./samplesheet.csv"
+outdir: "./results/"
+workflow_track: "generate_ometiff"
 ```
 
-You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+Use the repository's parameter templates and `nextflow_schema.json` to select supported settings.
 
 ### Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. To make sure that you're running the latest version of the pipeline, update the cached version regularly:
 
 ```bash
-nextflow pull nf-core/nidavellir
+nextflow pull luiskuhn/nidavellir -r dev
 ```
 
 ### Reproducibility
 
-For reproducibility, specify a pipeline release/tag and archive run artifacts (`pipeline_info/`, params, and metadata outputs).
+Examples use the moving `dev` branch. For reproducibility, specify a tested commit or release/tag and archive run artifacts (`pipeline_info/`, params, and metadata outputs).
 
 ### Core Nextflow arguments
 
@@ -220,5 +220,5 @@ Use Nextflow `-bg`, `screen`, or `tmux` if you want to detach from the terminal 
 In some environments, you may need to constrain JVM memory:
 
 ```bash
-NXF_OPTS='-Xms1g -Xmx4g'
+export NXF_OPTS='-Xms1g -Xmx4g'
 ```
