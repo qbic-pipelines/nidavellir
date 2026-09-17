@@ -20,7 +20,96 @@
 
 ## Introduction
 
-**nf-core/nidavellir** is a Nextflow / nf-core workflow for FAIR, reproducible, and extensible bioimage machine-learning workflows, with a focus on microscopy and medical-image segmentation. The project is motivated by a practical gap in many bioimage AI efforts: strong model architectures are often limited by fragmented data lifecycle practices. Nidavellir therefore treats data stewardship, provenance, and iterative model development as a single engineering problem rather than separate tasks.
+**Nidavellir** is the user-facing Nextflow orchestration layer for FAIR-oriented bioimage training, inference, and data storage. This development repository, [luiskuhn/nidavellir](https://github.com/luiskuhn/nidavellir), uses the nf-core template and module conventions; some template identifiers retain the `nf-core/nidavellir` name. The project focuses on microscopy and medical-image segmentation and treats data stewardship, provenance, and iterative model development as connected responsibilities.
+
+## Architecture and related repositories
+
+Nidavellir separates workflow orchestration, use-case applications, and shared
+utilities. Users enter through the Nextflow pipeline; trainers and tools can
+also be used independently. This README describes how the layers connect.
+Their installation instructions, APIs, and command references live in the
+companion repositories.
+
+| Layer | Repository | Responsibility |
+| --- | --- | --- |
+| 1. User entry point and orchestration | [Nidavellir](https://github.com/luiskuhn/nidavellir) — this repository | Route workflows, connect inputs and outputs, schedule containerized processes, configure resources, and collect workflow-level provenance. |
+| 2. Use-case applications | [NuxNet Training](https://github.com/luiskuhn/nuxnet-training/tree/master) — current trainer and proof of principle | Own the PyTorch model, scientific preprocessing, training/fine-tuning, and evaluation. Other trainers and inference runners can follow the same integration pattern. |
+| 3. Shared library and CLI applications | [Nidavellir Tools](https://github.com/luiskuhn/nidavellir-tools) | Provide reusable dataset-reading and model-package operations, including packaging, staging, loading, validation, and publication. |
+
+### How the layers connect
+
+[`main.nf`](main.nf) routes `--workflow_track` to `training`, `inference`,
+`data_storage`, or the conversion-only `generate_ometiff` shortcut. Nextflow
+owns **when and where** work runs, not model implementations or dataset-reader
+logic.
+
+NuxNet imports Nidavellir Tools as a Python library to read the supported
+BioImage Archive-style OME-TIFF dataset layout and prepare model artifacts.
+Model design and task-specific training decisions remain in NuxNet. This is the
+reference pattern for adding another trainer without coupling the shared tools
+to one use case.
+
+Nidavellir Tools also exposes CLI applications. The intended Nextflow integration
+is a set of thin modules that invoke those applications for parent-model staging,
+packaging, integrity inspection, official BioImage.IO validation, and publication.
+These wrappers should define container versions, resources, inputs, outputs, and
+version reporting, while delegating package logic to the tools themselves.
+Library-only functionality stays inside the trainer or inference runner.
+
+Data conversion and OMERO storage are separate workflow adapters, not additional
+responsibilities of the trainer. BioImage Archive provides datasets; BioImage.IO
+defines model interchange and validation; BioImage Model Zoo and Hugging Face
+are model-sharing destinations. Creating a compatible package does not
+automatically publish it to either service.
+
+### Workflow handoffs and responsibilities
+
+The target training lifecycle is dataset/optional parent-model staging, trainer
+execution, model packaging, validation, and reuse or explicitly configured
+publication. At each boundary, the pipeline must preserve a clear artifact
+contract:
+
+- **Dataset handoff:** workflow samplesheets select inputs; they are not the
+  trainer's dataset manifest. Adapters must provide the selected application's
+  expected image/annotation layout, calibration, and split metadata. Format
+  conversion alone does not create a labelled training dataset.
+- **Model handoff:** pass a portable model package and its metadata, not only a
+  checkpoint. Parent-weight initialization and full training-state resumption
+  are distinct operations that the application must support explicitly.
+- **Validation handoff:** retain the official validation report alongside the
+  tested package's identity. Integrity inspection, technical compatibility, and
+  scientific evaluation are separate checks; none substitutes for the others.
+- **Provenance and storage:** retain dataset/parent identifiers, software
+  versions, parameters, metrics, and output references across processes.
+  Workflow-level RO-Crate packaging complements model-package provenance.
+
+### Integration status
+
+The architecture above is the target integration, not a claim that the
+companion applications are already connected end to end.
+
+| Pipeline component | Current implementation |
+| --- | --- |
+| Track routing | Implemented in `main.nf`. |
+| Conversion and storage | OME-Zarr/OME-TIFF conversion and OMERO upload-manifest wiring exist; live OMERO operations are opt-in (`omero_dry_run` defaults to true). |
+| [Training](workflows/training.nf) | Six-stage scaffold; it does not yet invoke NuxNet or the shared Nidavellir Tools CLI. |
+| [Inference](workflows/inference.nf) | Conversion/export scaffold with pass-through model logic; mask/labelled filenames do not yet represent actual segmentation. |
+| Model lifecycle integration | Local staging/publication/RO-Crate building blocks exist. Thin Nidavellir Tools wrappers and end-to-end trainer integration remain to be wired and tested. |
+
+### Where to find detailed documentation
+
+- **Pipeline execution, track configuration, and outputs:** this README and the
+  local [usage](docs/usage.md), [output](docs/output.md), and
+  [architecture](docs/architecture.md) guides.
+- **NuxNet training, fine-tuning, model configuration, and container commands:**
+  the [NuxNet README](https://github.com/luiskuhn/nuxnet-training/blob/master/README.md).
+- **Shared Python APIs, CLI syntax, package formats, and validation requirements:**
+  the [Nidavellir Tools README](https://github.com/luiskuhn/nidavellir-tools#readme).
+
+Keep application-specific instructions in those companion repositories.
+This repository documents their workflow integration and artifact handoffs.
+
+## Lifecycle goals and FAIR context
 
 Nidavellir is designed for **iterative human-in-the-loop (HITL) model development** instead of isolated one-off runs. Its target lifecycle spans dataset staging, model pre-training or fine-tuning, inference, expert correction/curation, and reintegration of corrected annotations into subsequent training rounds. This lifecycle perspective aligns with established interactive-segmentation practice (for example [Mesmer](https://www.nature.com/articles/s41587-021-01094-0) and [Cellpose](https://www.nature.com/articles/s41592-022-01663-4)) while preserving nf-core standards for portability, provenance, and repeatability.
 
