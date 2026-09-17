@@ -24,6 +24,13 @@
 
 ## Architecture and related repositories
 
+![Graphical abstract of the target Nidavellir architecture: inference and uncertainty guide expert spatial annotation; curated datasets and reusable parent model packages support subsequent training runs.](docs/images/nidavellir-graphical-abstract.png)
+
+*Graphical abstract of the target lifecycle, not a completion or compliance claim.
+The companion tools provide reusable building blocks; end-to-end Nextflow wiring
+and uncertainty-guided annotation integration remain in development. See
+[integration status](#integration-status) below. [Full-size image](docs/images/nidavellir-graphical-abstract.png).*
+
 Nidavellir separates workflow orchestration, use-case applications, and shared
 utilities. Users enter through the Nextflow pipeline; trainers and tools can
 also be used independently. This README describes how the layers connect.
@@ -108,6 +115,86 @@ companion applications are already connected end to end.
 
 Keep application-specific instructions in those companion repositories.
 This repository documents their workflow integration and artifact handoffs.
+
+### Standards-aware data and model reuse
+
+Nidavellir Tools provides the data-loading building block for workflows aligned
+with **REMBI** (Recommended Metadata for Biological Images) and **MIFA** (Metadata,
+Incentives, Formats and Accessibility). REMBI describes the experimental and
+imaging context needed for reuse; MIFA extends the focus to reusable annotations
+and AI datasets. These guidelines inform dataset curation, rather than defining
+a single file format ([Sarkans et al., 2021](https://doi.org/10.1038/s41592-021-01166-8);
+[Zulueta-Coarasa et al., 2025](https://doi.org/10.1038/s41592-025-02835-8)).
+
+The current loader implements the supported BioImage Archive-style image/label
+table layout and reads OME-TIFF pixels, axes, and physical voxel sizes from
+OME-XML metadata. This follows the image-to-annotation association used in the
+[BioImage Archive file-list specification](https://www.ebi.ac.uk/bioimage-archive/help-file-list/).
+Archive submissions additionally require contextual metadata described in the
+[REMBI](https://www.ebi.ac.uk/bioimage-archive/rembi-help-overview/) and
+[MIFA](https://www.ebi.ac.uk/bioimage-archive/mifa-overview/) guidance.
+The loader does **not** validate complete REMBI/MIFA records, implement every
+archive layout, or certify submission compliance; curation remains the dataset
+provider's responsibility.
+
+The [OME Data Model and OME-XML schema](https://ome-model.readthedocs.io/en/stable/ome-xml/)
+define microscopy metadata; [OME-TIFF](https://ome-model.readthedocs.io/en/stable/ome-tiff/specification.html)
+embeds OME-XML in TIFF. [OME-Zarr/OME-NGFF](https://ngff.openmicroscopy.org/latest/)
+uses chunked arrays and NGFF metadata, not OME-XML embedded in TIFF
+([Moore et al., 2021](https://doi.org/10.1038/s41592-021-01326-w)).
+The pipeline supplies conversion between OME-Zarr and OME-TIFF where configured;
+the current Nidavellir Tools training reader accepts **OME-TIFF, not OME-Zarr**.
+Reading selected OME fields is not full XML-schema validation.
+
+Model reuse has a separate contract: the
+[BioImage.IO specification](https://github.com/bioimage-io/spec-bioimage-io)
+describes the model and its referenced artifacts for BioImage Model Zoo-compatible
+consumers. Nidavellir Tools packages and validates that model contract and can
+publish the package with a [Hugging Face model card](https://huggingface.co/docs/hub/model-cards).
+Hugging Face is a hosting and metadata layer, not a replacement for BioImage.IO's
+tensor/weight specification. Neither standard defines this trainer's dataset
+folder layout, and a package must still satisfy its destination's submission
+requirements.
+
+### Uncertainty-guided spatial supervision
+
+Nidavellir Tools includes **Monte Carlo dropout** prediction primitives for
+PyTorch convolutional networks, including segmentation U-Nets designed and
+trained with supported dropout layers. Repeated stochastic forward passes
+provide prediction means and dispersion estimates while other layers remain in
+evaluation mode. This is an approximate model-uncertainty approach, not a
+guarantee of calibrated confidence or a complete account of data uncertainty
+([Gal and Ghahramani, 2016](https://proceedings.mlr.press/v48/gal16.html)).
+
+In the proposed human-in-the-loop cycle, spatial uncertainty maps can help
+prioritize regions for expert inspection, correction, or additional segmentation
+labels. Those reviewed labels become versioned training data for the next
+fine-tuning round. This applies the broader rationale of uncertainty-guided
+iterative experimentation described by
+[Hie, Bryson and Berger, 2020](https://doi.org/10.1016/j.cels.2020.09.007);
+that study is not itself a validation of this segmentation workflow or MC dropout.
+Region selection, annotation interfaces, and feedback ingestion still need
+application/workflow integration. Uncertainty does not generate ground truth:
+experts supply labels, and selection should also account for diversity, bias,
+annotation cost, and held-out evaluation.
+
+### A reusable transfer-learning blueprint
+
+Together, NuxNet and Nidavellir Tools demonstrate an application-level blueprint:
+**train → package and validate → optionally publish → reuse as a parent → fine-tune
+and produce a child package**. The BioImage.IO package carries weights, model
+description, architecture/dependencies, and test artifacts; Hugging Face can host
+that package and its model card. A subsequent compatible NuxNet run uses the
+parent weights as initialization and records lineage in its new artifacts.
+This makes the model package the handoff between runs, rather than a private
+checkpoint path.
+
+The blueprint supports successive adaptation to new annotated data; it does not
+imply arbitrary model interoperability, automatic optimizer-state resumption,
+or guaranteed improvement. Preprocessing, tensor semantics, architecture, and
+label definitions must remain compatible or be adapted explicitly. Nextflow's
+role is to make these handoffs reproducible and schedulable; the detailed
+training and package commands remain in the companion READMEs linked above.
 
 ## Lifecycle goals and FAIR context
 
@@ -382,6 +469,10 @@ An extensive list of references for the tools used by the pipeline can be found 
 
 For conceptual and methodological context, the following references are particularly relevant to Nidavellir's design goals:
 
+- Sarkans U, Chiu W, Collinson L, *et al.* REMBI: Recommended Metadata for Biological Images—enabling reuse of microscopy data in biology. _Nat Methods_ 2021. doi: [10.1038/s41592-021-01166-8](https://doi.org/10.1038/s41592-021-01166-8).
+- Zulueta-Coarasa T, Jug F, Mathur A, *et al.* MIFA: Metadata, Incentives, Formats and Accessibility guidelines to improve the reuse of AI datasets for bioimage analysis. _Nat Methods_ 2025. doi: [10.1038/s41592-025-02835-8](https://doi.org/10.1038/s41592-025-02835-8).
+- Gal Y, Ghahramani Z. Dropout as a Bayesian Approximation: Representing Model Uncertainty in Deep Learning. _ICML, PMLR_ 48, 1050–1059 (2016). [Paper](https://proceedings.mlr.press/v48/gal16.html).
+- Hie B, Bryson BD, Berger B. Leveraging Uncertainty in Machine Learning Accelerates Biological Discovery and Design. _Cell Syst_ 11, 461–477.e9 (2020). doi: [10.1016/j.cels.2020.09.007](https://doi.org/10.1016/j.cels.2020.09.007).
 - Wilkinson MD, Dumontier M, Aalbersberg IJJ, *et al.* The FAIR Guiding Principles for scientific data management and stewardship. _Sci Data_ 2016. doi: [10.1038/sdata.2016.18](https://doi.org/10.1038/sdata.2016.18).
 - Barker M, Chue Hong NP, Katz DS, *et al.* Introducing the FAIR Principles for research software. _Sci Data_ 2022. doi: [10.1038/s41597-022-01710-x](https://doi.org/10.1038/s41597-022-01710-x).
 - Moore J, Allan C, Besson S, *et al.* OME-NGFF: a next-generation file format for expanding bioimaging data-access strategies. _Nat Methods_ 2021. doi: [10.1038/s41592-021-01326-w](https://doi.org/10.1038/s41592-021-01326-w).
