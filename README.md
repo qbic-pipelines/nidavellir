@@ -24,7 +24,7 @@
 
 ## Architecture and related repositories
 
-![Graphical abstract of the target Nidavellir architecture: inference and uncertainty guide expert spatial annotation; curated datasets and reusable parent model packages support subsequent training runs.](docs/images/nidavellir-graphical-abstract.png)
+![Target Nidavellir architecture: OMERO Bifrost connects Nextflow to federated OMERO constellations; inference and uncertainty guide expert spatial annotation, while curated datasets and parent model packages support subsequent training runs.](docs/images/nidavellir-graphical-abstract.png)
 
 *Graphical abstract of the target lifecycle, not a completion or compliance claim.
 The companion tools provide reusable building blocks; end-to-end Nextflow wiring
@@ -42,6 +42,7 @@ companion repositories.
 | 1. User entry point and orchestration | [Nidavellir](https://github.com/luiskuhn/nidavellir) — this repository | Route workflows, connect inputs and outputs, schedule containerized processes, configure resources, and collect workflow-level provenance. |
 | 2. Use-case applications | [NuxNet Training](https://github.com/luiskuhn/nuxnet-training/tree/master) — current trainer and proof of principle | Own the PyTorch model, scientific preprocessing, training/fine-tuning, and evaluation. Other trainers and inference runners can follow the same integration pattern. |
 | 3. Shared library and CLI applications | [Nidavellir Tools](https://github.com/luiskuhn/nidavellir-tools) | Provide reusable dataset-reading and model-package operations, including packaging, staging, loading, validation, and publication. |
+| 3. Repository access and transfer companion | [OMERO Bifrost (`forward-cycle`)](https://github.com/luiskuhn/omero-bifrost/tree/forward-cycle) | Provide workflow-oriented image/metadata operations across single OMERO servers or federated constellations, designed for Nextflow/nf-core and Nidavellir. |
 
 ### How the layers connect
 
@@ -64,10 +65,47 @@ version reporting, while delegating package logic to the tools themselves.
 Library-only functionality stays inside the trainer or inference runner.
 
 Data conversion and OMERO storage are separate workflow adapters, not additional
-responsibilities of the trainer. BioImage Archive provides datasets; BioImage.IO
+responsibilities of the trainer. OMERO Bifrost is the Nidavellir ecosystem's
+dedicated repository-access companion, complementary to Nidavellir Tools.
+BioImage Archive provides datasets; BioImage.IO
 defines model interchange and validation; BioImage Model Zoo and Hugging Face
 are model-sharing destinations. Creating a compatible package does not
 automatically publish it to either service.
+
+### OMERO Bifrost and federated constellations
+
+[OMERO Bifrost](https://github.com/luiskuhn/omero-bifrost/tree/forward-cycle) is part
+of the Nidavellir project and is designed to connect **Nextflow/nf-core workflows,
+including Nidavellir, to one or many OMERO servers**. Its query, push, and pull
+operations separate workflow logic from endpoint-specific hosts, credentials,
+group scopes, and access policies. The intended modules use it to discover and
+stage image data for training/inference, and to store curated images, labels,
+and metadata after expert review.
+
+A **federated OMERO constellation** is a set of independently configured OMERO
+endpoints accessed through this common operational interface—not a single
+database or an automatic replication service. On the linked development branch,
+each CLI invocation selects one server profile; multi-server execution is
+available through Bifrost's Python federation APIs, or can be orchestrated as
+profile-specific Nextflow tasks. Preserve server-qualified object identities
+(server profile plus local object ID), provenance, and per-site failures across
+workflow handoffs. Credentials and authorization remain site-specific and should
+be supplied securely at runtime, not embedded in samplesheets or published artifacts.
+
+Bifrost owns remote OMERO interaction and its constrained, standards-aware
+metadata handling; Nidavellir Tools owns local dataset reading and reusable
+model operations. BioImage Archive remains a separate dataset source, not an
+OMERO endpoint managed by Bifrost. This separation allows a trainer to consume
+staged files without knowing which institution holds the source images.
+
+**Integration boundary:** Bifrost provides the companion capability; this
+pipeline's current upload module still invokes the OMERO CLI directly. The
+Bifrost-backed modules and constellation-aware channels shown in the target
+architecture are planned integration, not enabled by this documentation update.
+See Bifrost's [architecture](https://github.com/luiskuhn/omero-bifrost/blob/forward-cycle/docs/architecture.md),
+[Nextflow integration guide](https://github.com/luiskuhn/omero-bifrost/blob/forward-cycle/docs/nextflow-nfcore.md),
+and [current command/profile contracts](https://github.com/luiskuhn/omero-bifrost/tree/forward-cycle#readme)
+for implementation details; pin and verify the chosen revision when building modules.
 
 ### Workflow handoffs and responsibilities
 
@@ -99,6 +137,7 @@ companion applications are already connected end to end.
 | --- | --- |
 | Track routing | Implemented in `main.nf`. |
 | Conversion and storage | OME-Zarr/OME-TIFF conversion and OMERO upload-manifest wiring exist; live OMERO operations are opt-in (`omero_dry_run` defaults to true). |
+| Federated OMERO access | Designed around OMERO Bifrost; profile-aware Bifrost wrappers are not yet wired into these tracks. Current upload uses the OMERO CLI directly. |
 | [Training](workflows/training.nf) | Six-stage scaffold; it does not yet invoke NuxNet or the shared Nidavellir Tools CLI. |
 | [Inference](workflows/inference.nf) | Conversion/export scaffold with pass-through model logic; mask/labelled filenames do not yet represent actual segmentation. |
 | Model lifecycle integration | Local staging/publication/RO-Crate building blocks exist. Thin Nidavellir Tools wrappers and end-to-end trainer integration remain to be wired and tested. |
@@ -112,6 +151,8 @@ companion applications are already connected end to end.
   the [NuxNet README](https://github.com/luiskuhn/nuxnet-training/blob/master/README.md).
 - **Shared Python APIs, CLI syntax, package formats, and validation requirements:**
   the [Nidavellir Tools README](https://github.com/luiskuhn/nidavellir-tools#readme).
+- **OMERO transfers, federation, server profiles, and metadata operations:**
+  the [OMERO Bifrost README](https://github.com/luiskuhn/omero-bifrost/tree/forward-cycle#readme).
 
 Keep application-specific instructions in those companion repositories.
 This repository documents their workflow integration and artifact handoffs.
@@ -254,6 +295,10 @@ The architecture is explicitly designed for end-to-end human-in-the-loop learnin
 
 ### Workflow diagram (current tracks and target HITL loop)
 
+The SVG includes a separate target-integration inset for OMERO Bifrost and
+federated OMERO sites. Dashed federation connections in the Mermaid source below
+describe planned wiring, not the current direct-OMERO-CLI upload implementation.
+
 [Download the vector graphic (SVG)](docs/images/nf-core-nidavellir_contained-workflows.svg)
 
 ![nf-core/nidavellir contained workflow tracks](docs/images/nf-core-nidavellir_contained-workflows.svg)
@@ -310,6 +355,21 @@ flowchart TD
     H --> E1
     E6 --> I[Versioned model and provenance artifact for redeployment]
     I --> F2
+
+    subgraph FED[Target federation integration - not yet wired]
+        BF[OMERO Bifrost - Nextflow-ready query / push / pull]
+        OA[OMERO site A]
+        OB[OMERO site B]
+        OC[OMERO site C]
+        BF <-->|profile A| OA
+        BF <-->|profile B| OB
+        BF <-->|profile C| OC
+    end
+    B -.->|profile-specific tasks| BF
+    BF -.->|stage images and labels| E1
+    BF -.->|stage image data only| F1
+    C3 -.->|push curated data and metadata| BF
+    H -.-> C1
 ```
 
 </details>

@@ -16,6 +16,30 @@ their respective staging steps; child packages return to model repositories.
 The green/purple crossing is not a connection. See the README for the precise
 artifact contracts and implementation status.
 
+The federation update identifies OMERO Bifrost as a Nidavellir companion designed
+for Nextflow and federated OMERO constellations. BioImage Archive is shown as a
+separate source. Bifrost targets one profile per CLI invocation; multi-server
+execution uses Python federation APIs or profile-specific Nextflow tasks.
+All eight lifecycle connector endpoints were preserved in this update.
+
+## OMERO Bifrost federation edit prompt
+
+```text
+Edit this existing Nidavellir graphical abstract with ONLY localized text/icon updates to document OMERO Bifrost. Preserve exact overall layout, ALL eight external arrow origins, routes, destinations and labels, ALL internal arrows, and all unrelated contents. Do not add, remove or reconnect arrows.
+1. In top-right Data storage panel, change middle card heading from "Store in OMERO" to two lines: "OMERO Bifrost" / "push + annotate". Replace single database symbol with 3 small database cylinders representing distinct OMERO sites, retaining within same card. Keep OME conversion and images/labels/metadata cards.
+2. In central BLUE Data repositories box replace "OMERO · BioImage Archive" with three compact lines, readable: "Federated OMERO constellation", "Site A · Site B · Site C", "BioImage Archive (separate source)". Replace its single OMERO cylinder icon with a compact cluster of three database cylinders. Keep box title Data repositories and format line OME-TIFF / OME-Zarr. If necessary enlarge this box slightly DOWN into free space without overlapping arrows; no arrow reassignment. This must not imply BioImage Archive is an OMERO endpoint.
+3. In bottom training Stage dataset card retain "Supported OME-TIFF layout", add small "OMERO Bifrost query / pull" above it, without covering icons.
+4. Replace bottom responsibility strip with FOUR equally spaced columns. Exact text:
+"Nextflow" / "Nidavellir workflow orchestration"
+"NuxNet" / "Use-case model + training logic"
+"Nidavellir Tools" / "Shared model + dataset utilities"
+"OMERO Bifrost" / "Nextflow-ready federated OMERO I/O"
+Use simple existing-style icons, no new external arrows.
+5. Keep prominent status "Target architecture · Nextflow integration in development", keep final MC dropout/standards caveat.
+6. Add a compact readable note below responsibility strip or near it: "Bifrost: one profile per CLI call; multi-server orchestration via Python APIs or Nextflow tasks".
+Keep every inference input, expert-review output, storage->data repo, dataset->stage dataset, model->stage parent, child->model repo arrow EXACTLY. Preserve scientific legibility and no text collisions.
+```
+
 ## Initial generation brief
 
 ```text

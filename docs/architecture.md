@@ -17,12 +17,42 @@ Each track is designed to exchange machine-readable outputs (for example OME-Zar
 | Nextflow | Workflow orchestration and scalable execution on local/HPC/cloud platforms. |
 | nf-core | Pipeline standards, community conventions, schema-driven parameters, and reusable modules. |
 | OMERO | Image and annotation management for staging training data and writing curated labels/metadata back to storage. |
+| [OMERO Bifrost](https://github.com/luiskuhn/omero-bifrost/tree/forward-cycle) | Nidavellir companion providing Nextflow-ready query/push/pull operations for single OMERO servers and federated OMERO constellations. |
 | OME-Zarr (NGFF) | Cloud- and analysis-friendly image format for staged training/inference inputs and downstream interoperability. |
 | PyTorch | Deep-learning framework for model training and evaluation (for example segmentation models such as U-Net). |
 | BioImage Model Zoo | Source for pretrained models and destination for publishing validated model artifacts. |
 | RO-Crate | FAIR packaging layer for data/model/provenance outputs with machine-readable metadata. |
 
 ## Workflow tracks
+
+### Federated repository access through OMERO Bifrost
+
+OMERO Bifrost is part of the Nidavellir ecosystem and is designed for integration
+with Nextflow/nf-core, including this pipeline. It supplies the remote-repository
+boundary; trainers and Nidavellir Tools work on staged artifacts rather than
+embedding institution-specific server logic. A constellation is a collection of
+independent OMERO endpoints with separate credentials, group scopes, and access
+policies—not automatic cross-site replication or a shared authorization domain.
+
+On the linked `forward-cycle` branch, the CLI targets one profile per invocation.
+Bifrost's Python federation APIs support multi-server operations; alternatively,
+Nextflow can dispatch one task per selected profile. Downstream records must
+retain the server profile together with each local object ID, plus provenance
+and failure information. Keep secrets out of channels and published metadata.
+
+The intended connections are:
+
+- Query/pull image data for inference and image/annotation pairs for training.
+- Push curated outputs and metadata back to explicitly selected OMERO sites.
+- Keep BioImage Archive access separate; it is not an OMERO constellation member.
+- Keep model-registry staging in Nidavellir Tools; Bifrost supplies image data,
+  not the inference model.
+
+Current pipeline upload still uses the OMERO CLI directly. Bifrost wrappers and
+constellation-aware workflow channels remain integration work. See the
+[README federation section](../README.md#omero-bifrost-and-federated-constellations),
+[Bifrost architecture](https://github.com/luiskuhn/omero-bifrost/blob/forward-cycle/docs/architecture.md),
+and [Nextflow integration guide](https://github.com/luiskuhn/omero-bifrost/blob/forward-cycle/docs/nextflow-nfcore.md).
 
 ### Training pipeline
 

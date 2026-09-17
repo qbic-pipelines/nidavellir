@@ -1,8 +1,11 @@
-<svg width="1800" height="1500" viewBox="0 0 1800 1500" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="1800" height="1790" viewBox="0 0 1800 1790" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">nf-core/nidavellir workflow map (code-aligned)</title>
-  <desc id="desc">Metro-style map aligned to current Nextflow implementation showing main workflow selector, workflow tracks, subworkflows, module-level nodes, scaffold stages, tools and output artifacts.</desc>
+  <desc id="desc">Current workflow map plus a separate target-integration inset: Nextflow and Nidavellir use OMERO Bifrost query, push and pull operations across a federated constellation of independently configured OMERO sites. Bifrost integration is not yet wired in the pipeline.</desc>
 
   <defs>
+    <marker id="federation-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#0f766e"/>
+    </marker>
     <style>
       .title { font: 700 34px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #0f172a; }
       .subtitle { font: 500 17px 'Inter', 'Segoe UI', Arial, sans-serif; fill: #334155; }
@@ -14,7 +17,7 @@
     </style>
   </defs>
 
-  <rect x="0" y="0" width="1800" height="1500" fill="#f3f4f6"/>
+  <rect x="0" y="0" width="1800" height="1790" fill="#f3f4f6"/>
   <text x="80" y="72" class="title">nf-core/nidavellir • workflow map (derived from README + Nextflow code)</text>
   <text x="80" y="102" class="subtitle">White circles = modules/processes • Gray circles = scaffold stages • Gray blocks = workflows/subworkflows • File icons = outputs • external nodes = OMERO / BioImage Zoo / Human reviewer</text>
 
@@ -218,4 +221,28 @@
   <text x="896" y="1450" class="tiny">workflow end</text>
   <rect x="1025" y="1430" width="56" height="30" rx="8" fill="#d1d5db" opacity="0.75"/>
   <text x="1093" y="1450" class="tiny">workflow / subworkflow container</text>
+  <!-- Separate target architecture: do not imply current module wiring. -->
+  <rect x="70" y="1510" width="1660" height="250" rx="18" fill="#ecfdf5" stroke="#0f766e" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="95" y="1544" class="workflow">Target integration: OMERO Bifrost for federated OMERO constellations (not yet wired)</text>
+  <rect x="110" y="1590" width="340" height="85" rx="12" fill="white" stroke="#64748b"/>
+  <text x="280" y="1622" text-anchor="middle" class="workflow">Nextflow / Nidavellir</text>
+  <text x="280" y="1650" text-anchor="middle" class="station">Training, inference and storage tracks</text>
+  <path d="M455 1632 H610" stroke="#0f766e" stroke-width="3" marker-end="url(#federation-arrow)"/>
+  <text x="532" y="1613" text-anchor="middle" class="tiny">profile-aware tasks</text>
+  <a href="https://github.com/luiskuhn/omero-bifrost/tree/forward-cycle">
+    <rect x="620" y="1590" width="360" height="85" rx="12" fill="white" stroke="#0f766e" stroke-width="2"/>
+    <text x="800" y="1622" text-anchor="middle" class="workflow">OMERO Bifrost</text>
+    <text x="800" y="1650" text-anchor="middle" class="station">Query / push / pull images and metadata</text>
+  </a>
+  <path d="M990 1610 H1100 V1592 H1200" stroke="#0f766e" stroke-width="3" fill="none" marker-start="url(#federation-arrow)" marker-end="url(#federation-arrow)"/>
+  <path d="M990 1632 H1200" stroke="#0f766e" stroke-width="3" fill="none" marker-start="url(#federation-arrow)" marker-end="url(#federation-arrow)"/>
+  <path d="M990 1654 H1100 V1672 H1200" stroke="#0f766e" stroke-width="3" fill="none" marker-start="url(#federation-arrow)" marker-end="url(#federation-arrow)"/>
+  <rect x="1210" y="1575" width="470" height="34" rx="8" fill="white" stroke="#0f766e"/>
+  <rect x="1210" y="1615" width="470" height="34" rx="8" fill="white" stroke="#0f766e"/>
+  <rect x="1210" y="1655" width="470" height="34" rx="8" fill="white" stroke="#0f766e"/>
+  <text x="1445" y="1598" text-anchor="middle" class="station">OMERO site A / profile A</text>
+  <text x="1445" y="1638" text-anchor="middle" class="station">OMERO site B / profile B</text>
+  <text x="1445" y="1678" text-anchor="middle" class="station">OMERO site C / profile C</text>
+  <text x="95" y="1720" class="station">One profile per CLI call; multi-server orchestration through Python federation APIs or profile-specific Nextflow tasks.</text>
+  <text x="95" y="1745" class="station">Preserve (server profile, local object ID) and per-site provenance. Independent credentials and access policies; no automatic replication.</text>
 </svg>
