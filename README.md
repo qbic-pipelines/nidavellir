@@ -26,7 +26,7 @@
 
 ![Target Nidavellir architecture: OMERO Bifrost connects Nextflow to federated OMERO constellations; inference and uncertainty guide expert spatial annotation, while curated datasets and parent model packages support subsequent training runs.](docs/images/nidavellir-graphical-abstract.png)
 
-*Graphical abstract of the target lifecycle, not a completion or compliance claim.
+*Simplified metro-style graphical abstract of the target lifecycle, not a completion or compliance claim.
 The companion tools provide reusable building blocks; end-to-end Nextflow wiring
 and uncertainty-guided annotation integration remain in development. See
 [integration status](#integration-status) below. [Full-size image](docs/images/nidavellir-graphical-abstract.png).*

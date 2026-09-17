@@ -1,11 +1,79 @@
 # Graphical abstract
 
+## Simplified nf-core-style redesign
+
+The current image uses flat metro-style workflow lines, inspired by the
+[nf-core/mcmicro pipeline diagram](https://nf-co.re/mcmicro/2.0.0/), rather than
+illustrated process cards. Small entity marks identify OMERO, OME-TIFF, OME-Zarr,
+BioImage Model Zoo, and Hugging Face; generated marks are illustrative, not
+canonical brand assets or an assertion of endorsement. No microscopy thumbnails
+or example metric plots remain. The diagram retains the eight cross-workflow
+connections and the federation and implementation-status caveats.
+
+Generated with the built-in image-generation tool, then visually reviewed.
+
+### Restyling prompt
+
+```text
+Restyle this existing graphical abstract into a minimalist nf-core-style METRO PIPELINE DIAGRAM. This is an edit: retain every workflow and all directed connections/semantics, but completely simplify the graphic. Clean white background, black/dark-gray sans-serif text, flat colors, no gradients, no shadows, NO photographs, NO microscopy examples, NO decorative charts, NO gears, NO neural-network drawings, NO large icons, NO card-within-card panels. Use colored horizontal metro lines with small circular stations, compact labels above/below, subtle flat light-gray lane bands, thin orthogonal inter-lane arrows with clearly separated crossings. Similar in spirit to nf-core/mcmicro metro pipeline diagrams. Landscape high resolution, slightly wider than existing reference, generous white space.
+Title "Nidavellir" (not nf-core/nidavellir, do not imply official membership)
+Subtitle "Nextflow workflows for FAIR-oriented bioimage learning"
+Small status text "Target architecture · integration in development"
+
+Keep same broad topology: inference upper left, expert review center, storage upper right; repositories middle; training bottom. The layout can widen or increase whitespace so labels and arrows never overlap.
+
+BLUE line upper left labelled "1  Inference":
+stations "Prepare images" [small second line "bioformats2raw"], "Predict + MC dropout" [second line "use-case runner"], "Predictions + uncertainty".
+Then directed output arrow into small simple rectangular "Expert review" block, subtitle "Correct / add spatial labels".
+Expert review arrow to GREEN line upper right labelled "3  Data storage": stations "OME conversion", "Push + annotate" [second line "OMERO Bifrost"], "Curated images + metadata".
+Keep storage return arrow to data repositories labelled "Curated images + labels".
+
+Middle BLUE outlined compact rectangle "Data repositories": small OMERO multicolor orbit logo next to "Federated OMERO constellation", second line "Site A · Site B · Site C"; separate "BioImage Archive" line (BIA is NOT an OMERO endpoint). Small flat OME-TIFF and OME-Zarr format badges/logos labelled clearly "OME-TIFF" and "OME-Zarr". Use small restrained entity marks only, not large cylinders.
+Middle PURPLE outlined compact rectangle "Model repositories": SMALL BioImage Model Zoo giraffe logo/mark beside its name, SMALL Hugging Face hugging-face logo beside its name. Footer "BioImage.IO packages + model cards". Do not substitute generic cubes for the BioImage Model Zoo mark.
+
+BOTTOM teal metro line labelled "2  Training and transfer learning", stations:
+"Stage dataset" / "OMERO Bifrost query / pull";
+"Stage parent model" / "Optional";
+"Train / fine-tune" / "NuxNet · PyTorch";
+"Evaluate" / "Held-out metrics";
+"Package + validate" / "Nidavellir Tools";
+"Child model package".
+Separate small output label "Workflow RO-Crate (target)".
+
+Mandatory cross-lane directed connections, exactly preserve their semantic starts and ends:
+Data repositories -> Inference Prepare images, label "Image data".
+Model repositories -> Inference, label "Trained model". Separate from image-data input, never from data repositories.
+Inference -> Expert review -> Data storage.
+Data storage -> Data repositories labelled "Curated images + labels", NOT to model repositories.
+Data repositories -> Training Stage dataset, label "Training dataset".
+Model repositories -> Training Stage parent model, label "Parent weights".
+Training Child model package -> Model repositories, label "Publish child model".
+All existing arrows for workflows 2 and 3 retained. Arrowheads point at destinations. Colored crossing paths use bridges/no junction dots; don't collide with words.
+No process icons anywhere. Only 5 small entity marks: OMERO, OME-TIFF, OME-Zarr, BioImage Model Zoo, Hugging Face. Accurate labels matter more than embellishment.
+Footer text-only strip:
+"Nextflow: orchestration  |  NuxNet: use-case training  |  Nidavellir Tools: shared utilities  |  OMERO Bifrost: federated OMERO I/O"
+Small footnote: "Bifrost: one profile per CLI call; federation via Python APIs or Nextflow tasks."
+Second footnote: "Conceptual lifecycle; see README for implementation status and standards scope."
+Keep content concise and legible at README width. The goal is descriptive software workflow diagram, not pictorial marketing infographic.
+```
+
+### Model-arrow correction prompt
+
+```text
+Correct ONLY the source endpoints of the two PURPLE model-input arrows. Keep the minimalist metro styling and every other element unchanged.
+ERROR: in the supplied image "Trained model" and "Parent weights" incorrectly originate on the BLUE Data repositories box. They MUST originate on the PURPLE Model repositories box.
+1. Trained model: disconnect completely from Data repositories top edge at x623 y394. Instead start at TOP EDGE of Model repositories around x1050 y394, go UP to y373, then LEFT through whitespace toward x325, and turn UP to existing arrowhead into Inference at x325 y318. Keep label Trained model. Do not let its line touch the blue data box. Use a small bridge at any crossing with the green curated-data line, without a junction.
+2. Parent weights: disconnect completely from Data repositories bottom edge at x623 y585. Instead start at BOTTOM EDGE of Model repositories around x1050 y585, go DOWN to y615, then LEFT to x493, then DOWN to existing Stage parent model arrowhead at x493 y716. Keep label Parent weights around x710 y635. Its horizontal segment is below both boxes, never attached to Data repositories.
+Data repositories should now have ONLY THREE connections: Image data OUT to inference, Training dataset OUT to Stage dataset, and Curated images + labels IN from storage. Model repositories should have ONLY THREE connections: Trained model OUT to inference, Parent weights OUT to stage parent, Publish child model IN from training.
+Keep all other labels, marks, logos, positions, internal station lines, footer, and arrows exactly unchanged. Do not remove the storage/training arrows. No new icons.
+```
+
 Asset: [nidavellir-graphical-abstract.png](nidavellir-graphical-abstract.png)
 
 Created with the built-in image-generation tool using a user-supplied graphical
 abstract as a visual reference. The original attachment is not redistributed.
-Microscopy panels, heatmaps, and metric plots are schematic illustrations, not
-experimental measurements. The image describes the target architecture; it does
+Earlier revisions included schematic microscopy, heatmaps, and metric plots;
+the current metro-style revision omits them. The image describes the target architecture; it does
 not certify implemented integrations, standards compliance, or model performance.
 
 The two incoming inference arrows deliberately distinguish image data from data
