@@ -10,8 +10,11 @@ not certify implemented integrations, standards compliance, or model performance
 
 The two incoming inference arrows deliberately distinguish image data from data
 repositories and trained models from model repositories. The inference output
-leads to expert review. Repository-to-training handoffs are summarized in text
-to avoid crowded connector routing; see the README for their precise contracts.
+leads to expert review. Storage returns curated images and labels to the data
+repositories. Separate arrows carry training datasets and parent weights into
+their respective staging steps; child packages return to model repositories.
+The green/purple crossing is not a connection. See the README for the precise
+artifact contracts and implementation status.
 
 ## Initial generation brief
 
@@ -53,4 +56,38 @@ Incoming arrow B: SOURCE is the TOP EDGE of the purple "Model repositories" box 
 Replace or remove the old "Curated datasets feed training and inference" text only if needed to make room for arrow A and its label.
 Preserve the existing single outgoing horizontal arrow from Inference to Expert review; no other incoming inference arrows or outgoing inference arrows.
 Keep every other panel, icon, caption, stage, color and text unchanged, including no other repository cross-links. Review each arrow start/end carefully.
+```
+
+## Restore training and storage connections
+
+```text
+Edit the supplied graphical abstract to RESTORE four missing arrows for workflows 2 and 3 while preserving the corrected inference connections EXACTLY. Keep panels, contents, colors, text and icons. You may increase vertical spacing between panels to route arrows cleanly.
+KEEP these existing three arrows: Data repositories -> Inference labelled Image data; Model repositories -> Inference labelled Trained model; Inference -> Expert review. KEEP Expert review -> Data storage. Keep all internal arrows.
+
+ADD precisely these four directed connectors:
+A. Data storage panel -> Data repositories box. Label "Curated images + labels". Source is lower edge of GREEN Data storage; destination arrowhead is upper edge of BLUE Data repositories, NOT Model repositories. Route an elbow path through the middle white space. If crossing another line is unavoidable, use a visible bridge crossing WITHOUT a junction dot. This line must not terminate in or connect to purple Model repositories.
+B. Data repositories -> Stage dataset card in training. Label "Training dataset". Start at bottom-left of Data repositories; route LEFT along whitespace below the repository then DOWN. Arrowhead must enter top of FIRST training card Stage dataset, NOT second Stage parent model. Do not run through training heading text.
+C. Model repositories -> Stage parent model card in training. Label "Parent weights". Start at bottom of purple Model repositories, route LEFT along a SEPARATE whitespace lane between repositories and training, then DOWN with arrowhead entering SECOND training card Stage parent model. Never connect it to Evaluate or dataset card. No arrowhead toward Model repositories on this line. Can increase whitespace before training and move heading slightly to avoid line/text collisions.
+D. Child package output in training -> Model repositories. Label "Publish child model". Start from RIGHT edge of Child package output; route RIGHT then UP along far-right margin then LEFT with arrowhead entering RIGHT edge of purple Model repositories. Keep child package -> next parent wording. Move/remove standalone "Publish child packages; reuse as parent models" caption to provide room for this line and label.
+
+Exact endpoint accuracy is more important than similarity of placement. There are now 8 inter-panel directed connections total: two inference inputs; inference to expert; expert to storage; storage to data repository; data to training dataset; model to training parent; child model to model repository. Do not add any others. Draw arrowheads only at destinations. Preserve all existing content and status caveats. Make routing readable.
+```
+
+## Endpoint correction
+
+```text
+Make ONLY these three small connector corrections to the attached image. Preserve ALL other arrows, panels, labels and contents exactly:
+1) Restore missing trained-model input to inference. Draw a PURPLE arrow starting at top of Model repositories box near x870 y465, going UP to y398, then LEFT to x613 with arrowhead pointing LEFT into right edge of blue Inference panel near its lower-right corner y398. Label "Trained model" along horizontal segment y398 above it (around x730 y390). This must start from Model repositories and end in Inference, NOT expert review. At crossing with green curated-data line near y439 use a small bridge/hop and no junction dot. Keep the green curated-data arrow intact.
+2) Blue Training dataset arrow currently ends at x255 y680 on heading. Move only its final vertical leg LEFT to x135 and extend it DOWN to y724 so arrowhead points into TOP of FIRST card "Stage dataset". Route the elbow left from Data repositories at y558 to x135, and then down. It will cross the heading row around x135; shift "Training and transfer learning" heading right to x290 if needed to avoid collision.
+3) Purple Parent weights arrow currently enters THIRD training card Train/fine-tune. Move only its last vertical leg from x525 to x380; point arrowhead DOWN into TOP of SECOND card "Stage parent model" at x380 y724. Keep source at Model repositories and label Parent weights. Route last segment behind no text: leave a whitespace gap in training heading or place heading at x540 if necessary.
+Critical: no existing arrows may be deleted. Inference must have BOTH image-data input and trained-model input plus outgoing expert-review arrow. Keep storage->data repo, child package->model repo, all internal arrows. Rendering of arrow endpoints is the only goal.
+```
+
+## Final visual cleanup
+
+```text
+Only fix two visual overlaps in this image. Do not change any arrow endpoints or delete any lines.
+1. Move heading "Training and transfer learning" from x165 y700 to x550 y700, within the same green header band, so purple parent-weights vertical line at x470 no longer crosses the heading. Keep numbered circle 2 where it is.
+2. Where the purple Trained model vertical arrow crosses the green Curated images + labels horizontal line (approximately x899 y439), add a small bridge/hop or white line break to show the two paths are NOT connected. Move label "Curated images + labels" to right along its green line, centered around x1090 y425, so the purple vertical does not cross this label.
+Preserve all other text, panels, icons, arrows, colors, geometry and all eight cross-panel connector endpoints exactly. No additional arrows.
 ```
